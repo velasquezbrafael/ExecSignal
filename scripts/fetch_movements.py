@@ -30,7 +30,7 @@ from html.parser import HTMLParser
 
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 DATA_PATH = Path(__file__).parent.parent / "data" / "movements.json"
-MAX_FILINGS = 50
+MAX_FILINGS = 200
 MIN_SECTION_LEN = 150
 MAX_SECTION_LEN = 3000
 MIN_CONFIDENCE = 0.70
@@ -75,7 +75,7 @@ def strip_html(html: str) -> str:
 
 def fetch_edgar_hits() -> list[dict]:
     now = datetime.now(timezone.utc)
-    start = (now - timedelta(hours=25)).strftime("%Y-%m-%d")
+    start = (now - timedelta(days=14)).strftime("%Y-%m-%d")
     end = now.strftime("%Y-%m-%d")
 
     url = "https://efts.sec.gov/LATEST/search-index"
