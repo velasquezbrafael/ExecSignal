@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ExecSignal — C-Suite Movement Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-page: #0f1117;
+      --bg-card: #161b27;
+      --bg-elevated: #1e2535;
+      --accent: #4f8ef7;
+      --text-p: #f1f5f9;
+      --text-s: #94a3b8;
+      --text-d: #475569;
+      --border: rgba(255,255,255,0.06);
+      --red: #ef4444; --green: #22c55e; --amber: #f59e0b; --gray: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg-page); color: var(--text-p); font-family: 'Inter', sans-serif; min-height: 100vh; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+
+    /* HEADER */
+    .hdr { background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { width: 30px; height: 30px; background: var(--accent); border-radius: 6px; display: grid; place-items: center; }
+    .logo-name { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+    .logo-badge { font-size: 10px; background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.28); border-radius: 4px; padding: 2px 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+    .hdr-right { display: flex; align-items: center; gap: 0; }
+
+    /* STATS */
+    .stats { padding: 20px 28px; display: flex; gap: 12px; }
+    .stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; flex: 1; }
+    .stat-lbl { font-size: 10px; color: var(--text-s); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+    .stat-val { font-size: 26px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .stat-sub { font-size: 11px; color: var(--text-d); margin-top: 3px; }
+    .blue { color: var(--accent); } .green { color: var(--green); } .red { color: var(--red); } .dim { color: var(--text-d); }
+
+    /* BANNER */
+    .banner { margin: 0 28px 16px; background: rgba(79,142,247,0.05); border: 1px solid rgba(79,142,247,0.18); border-radius: 7px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-s); }
+    .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: p 2s infinite; flex-shrink: 0; }
+    @keyframes p { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* TABS */
+    .tabs { display: flex; padding: 0 28px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+    .tab { padding: 9px 18px; font-size: 13px; font-weight: 500; color: var(--text-d); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .tab:hover { color: var(--text-s); }
+    .tab.on { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-pane { display: none; } .tab-pane.on { display: block; }
+
+    /* FILTER */
+    .filters { padding: 0 28px 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .filters input, .filters select { background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px; color: var(--text-p); font-family: 'Inter', sans-serif; font-size: 13px; padding: 7px 11px; outline: none; }
+    .filters input { flex: 1; max-width: 280px; }
+    .filters input::placeholder { color: var(--text-d); }
+    .filters input:focus, .filters select:focus { border-color: var(--accent); }
+    .row-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-d); margin-left: auto; }
+    .hide-noise-btn { font-size: 12px; color: var(--text-d); background: var(--bg-card); border: 1px solid var(--border); border-radius: 5px; padding: 6px 10px; cursor: pointer; }
+    .hide-noise-btn.on { color: var(--accent); border-color: rgba(79,142,247,0.3); }
+    .export-btn { font-size: 12px; color: var(--text-s); background: var(--bg-card); border: 1px solid var(--border); border-radius: 5px; padding: 6px 10px; cursor: pointer; }
+    .export-btn:hover { color: var(--text-p); border-color: rgba(255,255,255,0.12); }
+
+    /* TABLE */
+    .tbl-wrap { padding: 0 28px 24px; }
+    .tbl-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th { background: var(--bg-elevated); padding: 9px 12px; text-align: left; font-size: 10px; font-weight: 600; color: var(--text-s); text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid var(--border); white-space: nowrap; cursor: pointer; user-select: none; }
+    thead th:hover { color: var(--text-p); }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.015); }
+    tbody td { padding: 11px 12px; font-size: 12px; vertical-align: top; }
+
+    .td-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-s); white-space: nowrap; }
+    .co-name { font-weight: 600; font-size: 13px; }
+    .ticker { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent); background: rgba(79,142,247,0.08); border: 1px solid rgba(79,142,247,0.18); border-radius: 3px; padding: 1px 5px; display: inline-block; }
+    .exec-name { font-weight: 500; font-size: 13px; }
+    .exec-role { font-size: 11px; color: var(--text-s); margin-top: 2px; line-height: 1.4; max-width: 200px; }
+    .ctx { font-size: 11px; color: var(--text-s); line-height: 1.5; max-width: 260px; }
+    .ctx-successor { font-size: 10px; color: var(--text-d); margin-top: 3px; }
+
+    .badge { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap; }
+    .b-departure   { background:rgba(239,68,68,.1);   color:#ef4444; border:1px solid rgba(239,68,68,.22); }
+    .b-appointment { background:rgba(34,197,94,.1);   color:#22c55e; border:1px solid rgba(34,197,94,.22); }
+    .b-retirement  { background:rgba(148,163,184,.1); color:#94a3b8; border:1px solid rgba(148,163,184,.22); }
+    .b-transition  { background:rgba(79,142,247,.1);  color:#4f8ef7; border:1px solid rgba(79,142,247,.22); }
+    .b-interim     { background:rgba(245,158,11,.1);  color:#f59e0b; border:1px solid rgba(245,158,11,.22); }
+    .b-noise       { background:rgba(71,85,105,.1);   color:#475569; border:1px solid rgba(71,85,105,.22); }
+
+    .sig { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .sig-high   { color:#ef4444; } .sig-high   .dot { background:#ef4444; box-shadow:0 0 5px #ef4444; }
+    .sig-medium { color:#f59e0b; } .sig-medium .dot { background:#f59e0b; box-shadow:0 0 5px #f59e0b; }
+    .sig-low    { color:#94a3b8; } .sig-low    .dot { background:#94a3b8; }
+    .sig-none   { color:#475569; } .sig-none   .dot { background:#475569; }
+
+    .conf-wrap { display: flex; align-items: center; gap: 5px; }
+    .conf-track { width: 36px; height: 3px; background: rgba(255,255,255,0.07); border-radius: 2px; }
+    .conf-fill  { height: 100%; border-radius: 2px; background: var(--accent); }
+    .conf-val   { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-s); }
+
+    .src-link { font-size: 10px; color: var(--accent); text-decoration: none; font-family: 'JetBrains Mono', monospace; opacity: .6; }
+    .src-link:hover { opacity: 1; text-decoration: underline; }
+
+    /* FEEDBACK */
+    .fb-wrap { padding: 0 28px 32px; }
+    .fb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .fb-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 7px; padding: 14px; }
+    .fb-q { font-size: 13px; color: var(--text-p); line-height: 1.5; margin-bottom: 9px; }
+    .fb-a { width: 100%; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 5px; color: var(--text-p); font-family: 'Inter', sans-serif; font-size: 12px; padding: 8px 10px; resize: vertical; min-height: 58px; outline: none; }
+    .fb-a:focus { border-color: var(--accent); }
+    .fb-a::placeholder { color: var(--text-d); }
+
+    /* FINDINGS */
+    .findings { padding: 0 28px 32px; }
+    .find-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 9px; overflow: hidden; }
+    .find-row { display: flex; gap: 20px; padding: 16px 20px; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .find-row:last-child { border-bottom: none; }
+    .find-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--accent); min-width: 110px; padding-top: 1px; }
+    .find-txt { font-size: 13px; color: var(--text-s); line-height: 1.65; }
+    .find-txt strong { color: var(--text-p); }
+
+    .empty { padding: 48px; text-align: center; color: var(--text-d); font-size: 13px; }
+
+    @media (max-width: 768px) {
+      .stats { flex-wrap: wrap; }
+      .stat { min-width: calc(50% - 6px); }
+      .hdr { padding: 12px 16px; }
+      .stats, .filters, .tbl-wrap, .fb-wrap, .findings { padding-left: 16px; padding-right: 16px; }
+      .banner { margin-left: 16px; margin-right: 16px; }
+      .tabs { padding: 0 16px; }
+      .fb-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 2L16 6v6l-7 4L2 12V6L9 2z" stroke="white" stroke-width="1.5"/><circle cx="9" cy="9" r="2" fill="white"/></svg>
+    </div>
+    <span class="logo-name">ExecSignal</span>
+    <span class="logo-badge">Live</span>
+  </div>
+  <div class="hdr-right">
+    <span id="last-updated" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#475569">Loading&hellip;</span>
+    &nbsp;&middot;&nbsp;
+    <span id="filings-checked" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#475569">—</span><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#475569"> filings checked</span>
+    &nbsp;&middot;&nbsp;
+    <span onclick="loadData()" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#4f8ef7;cursor:pointer">&#8635; Refresh</span>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-lbl">Total Movements</div><div class="stat-val blue" id="st-total">—</div><div class="stat-sub">Last 30 days</div></div>
+  <div class="stat"><div class="stat-lbl">High Signal</div><div class="stat-val red" id="st-high">—</div><div class="stat-sub">Departures &amp; interims</div></div>
+  <div class="stat"><div class="stat-lbl">Medium Signal</div><div class="stat-val" style="color:var(--amber)" id="st-medium">—</div><div class="stat-sub">Retirements (no successor)</div></div>
+  <div class="stat"><div class="stat-lbl">Appointments</div><div class="stat-val green" id="st-appt">—</div><div class="stat-sub">New hires &amp; promotions</div></div>
+  <div class="stat"><div class="stat-lbl">Est. Daily Volume</div><div class="stat-val blue">~15</div><div class="stat-sub">Real movements/day · all public cos</div></div>
+</div>
+
+<div class="banner">
+  <div class="pulse"></div>
+  <span>Real-time SEC 8-K filings — Item 5.02 executive movements. Parsed by Claude Haiku. Updated every 4 hours via GitHub Actions. Confidence &lt;0.70 filtered automatically.</span>
+</div>
+
+<div class="tabs">
+  <div class="tab on" onclick="switchTab('feed',this)">Movement Feed</div>
+  <div class="tab" onclick="switchTab('feedback',this)">Dad's Feedback</div>
+  <div class="tab" onclick="switchTab('findings',this)">Phase 0 Findings</div>
+</div>
+
+<!-- FEED -->
+<div id="pane-feed" class="tab-pane on">
+  <div class="filters">
+    <input type="text" id="srch" placeholder="Search company, exec, role…" oninput="filter()">
+    <select id="tf" onchange="filter()">
+      <option value="">All types</option>
+      <option value="retirement">Retirement</option>
+      <option value="appointment">Appointment</option>
+      <option value="transition">Transition</option>
+      <option value="departure">Departure</option>
+      <option value="interim">Interim</option>
+    </select>
+    <select id="sf" onchange="filter()">
+      <option value="">All signals</option>
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="low">Low</option>
+      <option value="none">None</option>
+    </select>
+    <button class="hide-noise-btn" id="noise-btn" onclick="toggleNoise()">Hide Noise</button>
+    <button class="export-btn" onclick="exportCSV()">Export CSV</button>
+    <span class="row-count" id="rc">— rows</span>
+  </div>
+  <div class="tbl-wrap">
+    <div class="tbl-box">
+      <table>
+        <thead>
+          <tr>
+            <th>Filed</th>
+            <th>Company</th>
+            <th>Executive</th>
+            <th>Type</th>
+            <th>Eff. Date</th>
+            <th>Context</th>
+            <th>Conf.</th>
+            <th>Signal</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- FEEDBACK -->
+<div id="pane-feedback" class="tab-pane">
+  <div class="fb-wrap">
+    <div class="fb-grid" id="fb-grid"></div>
+  </div>
+</div>
+
+<!-- FINDINGS -->
+<div id="pane-findings" class="tab-pane">
+  <div class="findings">
+    <div class="find-box">
+      <div class="find-row">
+        <div class="find-lbl">Signal/Noise</div>
+        <div class="find-txt"><strong>57% of Item 5.02 filings are noise</strong> — equity plan amendments, director elections, comp arrangements. EDGAR can't filter them. Claude Haiku's first job is classification, not extraction: check the 5.02 sub-clause letter before parsing anything.</div>
+      </div>
+      <div class="find-row">
+        <div class="find-lbl">Sub-clauses</div>
+        <div class="find-txt">5.02 has five sub-clauses. Only <strong>(b) Departure</strong> and <strong>(c) Appointment</strong> are recruiter-relevant. <strong>(e) Compensatory arrangements</strong> is the primary noise source — equity plan approvals filed at annual meeting time flood the feed every proxy season.</div>
+      </div>
+      <div class="find-row">
+        <div class="find-lbl">Volume</div>
+        <div class="find-txt"><strong>603 Item 5.02 filings</strong> in 17 days = ~35/day. After 57% noise filter: <strong>~15 real movements/day</strong> across all ~4,900 public companies. After C-suite title filter (CEO / CFO / COO / President / CTO): probably <strong>3–5 high-quality signals/day.</strong></div>
+      </div>
+      <div class="find-row">
+        <div class="find-lbl">Haiku Accuracy</div>
+        <div class="find-txt">Confidence <strong>0.91–0.97</strong> on the 3 real movements reviewed. SEC filing language is structured and consistent — ideal for extraction. Hardest case: 8-K/A amendments where the original event date predates the current window.</div>
+      </div>
+      <div class="find-row">
+        <div class="find-lbl">Data Richness</div>
+        <div class="find-txt">Every real movement filing included: exec name, full title, effective date, reason, successor (if any). Eagle Materials even provided the new hire's full career history going back 8 years. <strong>The raw data is richer than expected.</strong></div>
+      </div>
+      <div class="find-row">
+        <div class="find-lbl">Phase 0 Gate</div>
+        <div class="find-txt">Dad must confirm: columns are right, signal scoring makes sense, and industry filter is correct. Fill the Feedback tab together. <strong>Zero Phase 1 code until those answers are in.</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = [];
+let _filtered = [];
+let hideNoise = false;
+
+// ---------------------------------------------------------------------------
+// Data loading
+// ---------------------------------------------------------------------------
+
+async function loadData() {
+  document.getElementById('last-updated').textContent = 'Refreshing…';
+  try {
+    const r = await fetch('data/movements.json?t=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const json = await r.json();
+
+    DATA.length = 0;
+    DATA.push(...(json.movements || []));
+
+    const el = document.getElementById('last-updated');
+    const fc = document.getElementById('filings-checked');
+    if (el) el.textContent = json.updated_at
+      ? 'Updated ' + new Date(json.updated_at).toLocaleString('en-US', {
+          month: 'short', day: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        })
+      : '—';
+    if (fc) fc.textContent = json.total_filings_checked ?? '—';
+
+    updateStats();
+    filter();
+  } catch (e) {
+    console.error(e);
+    document.getElementById('last-updated').textContent = 'Load error — try refreshing';
+    document.getElementById('tbody').innerHTML =
+      '<tr><td colspan="9"><div class="empty">Could not load live data. If running locally, open via a server (npx serve .) not file://</div></td></tr>';
+  }
+}
+
+function updateStats() {
+  const total = DATA.length;
+  const high = DATA.filter(m => m.signal === 'high').length;
+  const med  = DATA.filter(m => m.signal === 'medium').length;
+  const appt = DATA.filter(m => m.movement_type === 'appointment').length;
+  document.getElementById('st-total').textContent = total || '—';
+  document.getElementById('st-high').textContent  = high  || '0';
+  document.getElementById('st-medium').textContent = med  || '0';
+  document.getElementById('st-appt').textContent  = appt  || '0';
+}
+
+// ---------------------------------------------------------------------------
+// Render helpers
+// ---------------------------------------------------------------------------
+
+const TLABEL = {
+  departure: 'Departure', appointment: 'Appointment', retirement: 'Retirement',
+  transition: 'Transition', interim: 'Interim', noise: 'Noise'
+};
+const SLABEL = { high: 'High', medium: 'Medium', low: 'Low', none: 'None' };
+
+function badge(type) {
+  return '<span class="badge b-' + type + '">' + (TLABEL[type] || type) + '</span>';
+}
+
+function sig(s) {
+  if (!s || s === 'none') return '<div class="sig sig-none"><div class="dot"></div>None</div>';
+  return '<div class="sig sig-' + s + '"><div class="dot"></div>' + (SLABEL[s] || s) + '</div>';
+}
+
+function confHtml(c) {
+  if (c === null || c === undefined) return '<span style="color:var(--text-d);font-size:11px">—</span>';
+  return '<div class="conf-wrap"><div class="conf-track"><div class="conf-fill" style="width:' + (c * 100) + '%"></div></div><span class="conf-val">' + c.toFixed(2) + '</span></div>';
+}
+
+function escHtml(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ---------------------------------------------------------------------------
+// Render
+// ---------------------------------------------------------------------------
+
+function render(data) {
+  _filtered = data;
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="empty">No matching movements.</div></td></tr>';
+    document.getElementById('rc').textContent = '0 rows';
+    return;
+  }
+
+  data.forEach(m => {
+    const tr = document.createElement('tr');
+    tr.setAttribute('data-t', m.movement_type || '');
+
+    const effDate = m.effective_date || '—';
+    const successorLine = m.successor
+      ? '<div class="ctx-successor">Successor: ' + escHtml(m.successor) + '</div>'
+      : '';
+    const priorLine = m.prior_company
+      ? '<div class="ctx-successor">Prior: ' + escHtml(m.prior_company) + '</div>'
+      : '';
+
+    tr.innerHTML =
+      '<td class="td-date">' + escHtml(m.filed_date) + '</td>' +
+      '<td>' +
+        '<div class="co-name">' + escHtml(m.company) + '</div>' +
+        (m.ticker ? '<span class="ticker">' + escHtml(m.ticker) + '</span>' : '') +
+      '</td>' +
+      '<td>' +
+        '<div class="exec-name">' + escHtml(m.executive_name || '—') + '</div>' +
+        '<div class="exec-role">' + escHtml(m.role || '') + '</div>' +
+      '</td>' +
+      '<td>' + badge(m.movement_type || 'noise') + '</td>' +
+      '<td class="td-date">' + escHtml(effDate) + '</td>' +
+      '<td>' +
+        '<div class="ctx">' + escHtml(m.reason || '') + '</div>' +
+        successorLine +
+        priorLine +
+      '</td>' +
+      '<td>' + confHtml(m.confidence) + '</td>' +
+      '<td>' + sig(m.signal) + '</td>' +
+      '<td><a href="' + escHtml(m.source_url) + '" target="_blank" rel="noopener" class="src-link">SEC →</a></td>';
+
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('rc').textContent = data.length + ' row' + (data.length !== 1 ? 's' : '');
+}
+
+// ---------------------------------------------------------------------------
+// Filter
+// ---------------------------------------------------------------------------
+
+function toggleNoise() {
+  hideNoise = !hideNoise;
+  const btn = document.getElementById('noise-btn');
+  btn.classList.toggle('on', hideNoise);
+  btn.textContent = hideNoise ? 'Show Noise' : 'Hide Noise';
+  filter();
+}
+
+function filter() {
+  const s  = document.getElementById('srch').value.toLowerCase();
+  const t  = document.getElementById('tf').value;
+  const sg = document.getElementById('sf').value;
+
+  const out = DATA.filter(m => {
+    if (hideNoise && m.movement_type === 'noise') return false;
+    const ms = !s || [m.company, m.executive_name, m.role].some(v => v && v.toLowerCase().includes(s));
+    const mt = !t  || m.movement_type === t;
+    const msi = !sg || m.signal === sg;
+    return ms && mt && msi;
+  });
+
+  render(out);
+}
+
+// ---------------------------------------------------------------------------
+// CSV export
+// ---------------------------------------------------------------------------
+
+function exportCSV() {
+  const rows = _filtered.length ? _filtered : DATA;
+  const cols = ['filed_date','company','ticker','executive_name','role','movement_type','effective_date','reason','successor','prior_company','confidence','signal','source_url'];
+  const header = cols.join(',');
+  const lines = rows.map(m =>
+    cols.map(k => {
+      const v = m[k] != null ? String(m[k]) : '';
+      return '"' + v.replace(/"/g, '""') + '"';
+    }).join(',')
+  );
+  const csv = [header, ...lines].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'execsignal-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+// ---------------------------------------------------------------------------
+// Tabs
+// ---------------------------------------------------------------------------
+
+function switchTab(id, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('pane-' + id).classList.add('on');
+}
+
+// ---------------------------------------------------------------------------
+// Feedback
+// ---------------------------------------------------------------------------
+
+const FBQ = [
+  "Are these the right columns? What would you add or remove?",
+  "Should Noise rows be shown (dimmed) or hidden completely?",
+  "If a successor was already named, does that drop the signal significantly?",
+  "What industries do you work in most? We'll use this for High Signal alerts.",
+  "Do you need company size info (market cap, headcount)? Would require a 3rd-party source.",
+  "How quickly do you need to see a new movement? Same day? Weekly digest?",
+  "Email alerts for High Signal events, or just check the dashboard?",
+  "Is there anything about how you find searches today that this format misses?",
+  "Does the Context column give you enough at a glance, or do you need more detail?",
+  "Overall gut check: is this a tool you'd actually open every morning?",
+];
+
+function buildFeedback() {
+  const g = document.getElementById('fb-grid');
+  FBQ.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'fb-card';
+    const saved = (() => { try { return localStorage.getItem('fbq' + i) || ''; } catch(e) { return ''; } })();
+    div.innerHTML = '<div class="fb-q">' + (i + 1) + '. ' + q + '</div><textarea class="fb-a" placeholder="Write answer here…" onchange="save(' + i + ',this.value)">' + saved + '</textarea>';
+    g.appendChild(div);
+  });
+}
+
+function save(i, v) { try { localStorage.setItem('fbq' + i, v); } catch(e) {} }
+
+// ---------------------------------------------------------------------------
+// Init
+// ---------------------------------------------------------------------------
+
+loadData();
+buildFeedback();
+</script>
+</body>
+</html>

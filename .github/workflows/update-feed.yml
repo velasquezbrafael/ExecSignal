@@ -1,0 +1,39 @@
+name: Update ExecSignal Feed
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'   # every 4 hours
+  workflow_dispatch:          # manual trigger from GitHub UI
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests anthropic
+
+      - name: Fetch and parse EDGAR filings
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scripts/fetch_movements.py
+
+      - name: Commit updated feed
+        run: |
+          git config user.name "ExecSignal Bot"
+          git config user.email "execsignal-bot@users.noreply.github.com"
+          git add data/movements.json
+          git diff --staged --quiet || git commit -m "feed: update movements $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
