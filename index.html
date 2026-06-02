@@ -4,574 +4,764 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ExecSignal — C-Suite Movement Intelligence</title>
-  <meta name="description" content="Real-time executive movement intelligence sourced from SEC EDGAR 8-K filings. Track C-suite departures, appointments, and transitions as they happen.">
+  <meta name="description" content="Real-time executive movement intelligence sourced from SEC EDGAR 8-K filings.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-page:    #0f1117;
-      --bg-card:    #161b27;
-      --bg-elevated:#1e2535;
-      --accent:     #4f8ef7;
-      --text-p:     #f1f5f9;
-      --text-s:     #94a3b8;
-      --text-d:     #475569;
-      --border:     rgba(255,255,255,0.06);
+      --bg:        #0a0a0a;
+      --bg-card:   #111318;
+      --bg-elev:   #181c25;
+      --accent:    #4f8ef7;
+      --text-p:    #f1f5f9;
+      --text-s:    #94a3b8;
+      --text-d:    #3d4a5c;
+      --border:    rgba(255,255,255,0.055);
       --red:   #ef4444;
       --green: #22c55e;
       --amber: #f59e0b;
-      --gray:  #94a3b8;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg-page); color: var(--text-p); font-family: 'Inter', sans-serif; min-height: 100vh; }
 
-    /* ── HEADER ── */
-    .hdr {
-      background: var(--bg-card);
-      border-bottom: 1px solid var(--border);
-      padding: 0 28px;
-      height: 56px;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-p);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      padding: 0 40px;
+      background: transparent;
+      transition: background 0.3s ease, border-bottom 0.3s ease;
     }
-    .logo { display: flex; align-items: center; gap: 10px; }
-    .logo-icon {
-      width: 28px; height: 28px;
+    .nav.scrolled {
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-icon {
+      width: 26px; height: 26px;
       background: var(--accent);
       border-radius: 5px;
       display: grid; place-items: center;
+      flex-shrink: 0;
     }
-    .logo-name { font-size: 16px; font-weight: 700; letter-spacing: -0.4px; }
-    .logo-sep { width: 1px; height: 18px; background: var(--border); margin: 0 4px; }
-    .logo-sub { font-size: 12px; color: var(--text-d); font-weight: 400; letter-spacing: 0; }
-    .live-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 6px var(--green);
-      animation: blink 2.5s infinite;
+    .nav-name {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
     }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
-    .hdr-meta {
+    .nav-meta {
       display: flex;
       align-items: center;
-      gap: 16px;
-      font-family: 'JetBrains Mono', monospace;
+      gap: 20px;
+      font-family: 'Inter', monospace;
       font-size: 11px;
+      font-weight: 400;
       color: var(--text-d);
     }
-    .hdr-meta span { white-space: nowrap; }
-    .refresh-btn {
-      color: var(--accent);
-      cursor: pointer;
-      font-size: 11px;
-      opacity: .7;
-      transition: opacity .15s;
+    .live-pip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .live-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 5px var(--green);
+      animation: pip 2.5s ease-in-out infinite;
+    }
+    @keyframes pip { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .nav-refresh {
       background: none;
       border: none;
-      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      font-size: 11px;
+      font-family: 'Inter', monospace;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity .15s;
       padding: 0;
+      font-weight: 400;
     }
-    .refresh-btn:hover { opacity: 1; }
+    .nav-refresh:hover { opacity: 1; }
 
-    /* ── STATS ── */
-    .stats { padding: 20px 28px 0; display: flex; gap: 12px; }
-    .stat {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 14px 18px;
-      flex: 1;
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 600px;
+      background: var(--bg);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
     }
-    .stat-lbl { font-size: 10px; color: var(--text-s); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-    .stat-val { font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-    .stat-sub { font-size: 11px; color: var(--text-d); margin-top: 3px; }
-    .c-blue { color: var(--accent); }
-    .c-red  { color: var(--red); }
-    .c-amb  { color: var(--amber); }
-    .c-grn  { color: var(--green); }
-    .c-dim  { color: var(--text-d); }
-
-    /* ── SOURCE BAR ── */
-    .source-bar {
-      margin: 16px 28px 0;
-      padding: 9px 14px;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(0,0,0,0.45) 0%,
+        rgba(0,0,0,0.05) 55%,
+        rgba(0,0,0,0.55) 100%
+      );
+      z-index: 1;
+      pointer-events: none;
+    }
+    .hero-grid-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size: 80px 80px;
+      z-index: 0;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 48px 72px;
+      max-width: 1100px;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+    .hero-wordmark {
+      font-size: clamp(64px, 9vw, 112px);
+      font-weight: 700;
+      letter-spacing: -4px;
+      line-height: 0.92;
+      color: var(--text-p);
+    }
+    .hero-tagline {
+      margin-top: 22px;
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text-s);
+      letter-spacing: 0;
+      max-width: 440px;
+      line-height: 1.6;
+    }
+    .hero-scroll-cue {
+      margin-top: 40px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-d);
+      letter-spacing: 0.5px;
+    }
+    .hero-scroll-line {
+      width: 28px; height: 1px;
+      background: var(--text-d);
+    }
+
+    /* ── BENTO ── */
+    .bento {
+      padding: 48px 40px 0;
+    }
+    .bento-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 10px;
+    }
+    .bento-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 28px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .bento-tile.span2 {
+      grid-column: span 2;
+      padding: 36px 32px 32px;
+    }
+    .bento-num {
+      font-size: 52px;
+      font-weight: 500;
+      line-height: 1;
+      letter-spacing: -2px;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 8px;
+    }
+    .bento-tile.span2 .bento-num { font-size: 72px; letter-spacing: -3px; }
+    .bento-lbl {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-d);
+      letter-spacing: 0.3px;
+    }
+    .bento-sub {
       font-size: 11px;
       color: var(--text-d);
+      margin-top: 4px;
+      opacity: 0.7;
     }
-    .source-bar .live-dot { flex-shrink: 0; }
-    .source-bar a { color: var(--accent); text-decoration: none; opacity: .8; }
-    .source-bar a:hover { opacity: 1; text-decoration: underline; }
-    .src-sep { color: var(--border); }
+    .c-blue  { color: var(--accent); }
+    .c-red   { color: var(--red); }
+    .c-amb   { color: var(--amber); }
+    .c-grn   { color: var(--green); }
+    .c-dim   { color: var(--text-d); }
 
-    /* ── FILTERS ── */
-    .filters {
-      padding: 16px 28px 12px;
+    /* ── FEED SECTION ── */
+    .feed {
+      padding: 40px 40px 0;
+    }
+    .feed-header {
       display: flex;
-      gap: 8px;
       align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .feed-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-s);
+      letter-spacing: 0.3px;
+    }
+    .feed-source {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--text-d);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .feed-source a {
+      color: var(--accent);
+      text-decoration: none;
+      opacity: 0.7;
+    }
+    .feed-source a:hover { opacity: 1; text-decoration: underline; }
+
+    /* pill tabs */
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .pills {
+      display: flex;
+      gap: 4px;
       flex-wrap: wrap;
     }
-    .filters input,
-    .filters select {
+    .pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-s);
+      font-size: 12px;
+      font-weight: 400;
+      font-family: 'Inter', sans-serif;
+      padding: 5px 14px;
+      cursor: pointer;
+      transition: background .12s, color .12s, border-color .12s;
+      white-space: nowrap;
+    }
+    .pill:hover {
+      color: var(--text-p);
+      border-color: rgba(255,255,255,0.12);
+    }
+    .pill.on {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 500;
+    }
+    .filter-input {
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 6px;
       color: var(--text-p);
       font-family: 'Inter', sans-serif;
       font-size: 13px;
-      padding: 7px 11px;
+      font-weight: 300;
+      padding: 6px 11px;
       outline: none;
+      width: 200px;
       transition: border-color .15s;
     }
-    .filters input { flex: 1; max-width: 260px; min-width: 160px; }
-    .filters input::placeholder { color: var(--text-d); }
-    .filters input:focus,
-    .filters select:focus { border-color: var(--accent); }
-    .filters select { cursor: pointer; }
-    .btn-sm {
-      font-size: 12px;
-      color: var(--text-s);
+    .filter-input::placeholder { color: var(--text-d); }
+    .filter-input:focus { border-color: rgba(79,142,247,0.5); }
+    .btn-export {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 7px 12px;
-      cursor: pointer;
+      border-radius: 6px;
+      color: var(--text-s);
+      font-size: 12px;
       font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      padding: 6px 12px;
+      cursor: pointer;
       transition: color .15s, border-color .15s;
       white-space: nowrap;
     }
-    .btn-sm:hover { color: var(--text-p); border-color: rgba(255,255,255,0.12); }
-    .btn-sm.on { color: var(--accent); border-color: rgba(79,142,247,0.35); }
-    .row-count {
-      font-family: 'JetBrains Mono', monospace;
+    .btn-export:hover { color: var(--text-p); border-color: rgba(255,255,255,0.12); }
+    .btn-noise {
+      background: transparent;
+      border: none;
+      color: var(--text-d);
       font-size: 11px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      cursor: pointer;
+      padding: 0 4px;
+      transition: color .15s;
+    }
+    .btn-noise:hover { color: var(--text-s); }
+    .btn-noise.on { color: var(--accent); }
+    .row-count {
+      font-size: 11px;
+      font-weight: 400;
       color: var(--text-d);
       margin-left: auto;
       white-space: nowrap;
     }
 
     /* ── TABLE ── */
-    .tbl-wrap { padding: 0 28px 40px; }
+    .tbl-wrap { padding-bottom: 80px; }
     .tbl-box {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 9px;
+      border-radius: 12px;
       overflow: hidden;
     }
     table { width: 100%; border-collapse: collapse; }
     thead th {
-      background: var(--bg-elevated);
-      padding: 9px 12px;
+      background: var(--bg-elev);
+      padding: 10px 14px;
       text-align: left;
       font-size: 10px;
-      font-weight: 600;
-      color: var(--text-s);
+      font-weight: 500;
+      color: var(--text-d);
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.6px;
       border-bottom: 1px solid var(--border);
       white-space: nowrap;
       user-select: none;
     }
-    tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background .08s;
+    }
     tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: rgba(255,255,255,0.015); }
-    tbody td { padding: 12px 12px; font-size: 12px; vertical-align: top; }
+    tbody tr:hover { background: rgba(255,255,255,0.012); }
+    tbody td { padding: 14px 14px; font-size: 12px; vertical-align: top; }
 
     .td-date {
-      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      color: var(--text-s);
+      font-weight: 400;
+      color: var(--text-d);
       white-space: nowrap;
+      letter-spacing: 0.2px;
     }
-    .co-name { font-weight: 600; font-size: 13px; line-height: 1.3; }
+    .co-name { font-weight: 500; font-size: 13px; line-height: 1.3; }
     .ticker {
-      font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
+      font-weight: 500;
       color: var(--accent);
       background: rgba(79,142,247,0.08);
-      border: 1px solid rgba(79,142,247,0.18);
+      border: 1px solid rgba(79,142,247,0.16);
       border-radius: 3px;
       padding: 1px 5px;
       display: inline-block;
-      margin-top: 3px;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
     }
-    .exec-name { font-weight: 500; font-size: 13px; }
-    .exec-role { font-size: 11px; color: var(--text-s); margin-top: 2px; line-height: 1.4; max-width: 210px; }
-    .ctx { font-size: 11px; color: var(--text-s); line-height: 1.55; max-width: 270px; }
-    .ctx-sub { font-size: 10px; color: var(--text-d); margin-top: 3px; }
+    .exec-name { font-weight: 500; font-size: 14px; line-height: 1.3; }
+    .exec-role { font-size: 12px; font-weight: 300; color: var(--text-s); margin-top: 3px; line-height: 1.4; max-width: 220px; }
+    .ctx-text { font-size: 11px; font-weight: 300; color: var(--text-s); line-height: 1.6; max-width: 280px; }
+    .ctx-sub  { font-size: 10px; font-weight: 300; color: var(--text-d); margin-top: 4px; }
 
     .badge {
       display: inline-flex;
       align-items: center;
-      padding: 2px 7px;
+      padding: 2px 8px;
       border-radius: 4px;
       font-size: 10px;
-      font-weight: 700;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.4px;
       white-space: nowrap;
     }
-    .b-departure   { background:rgba(239,68,68,.1);   color:#ef4444; border:1px solid rgba(239,68,68,.22); }
-    .b-appointment { background:rgba(34,197,94,.1);   color:#22c55e; border:1px solid rgba(34,197,94,.22); }
-    .b-retirement  { background:rgba(148,163,184,.1); color:#94a3b8; border:1px solid rgba(148,163,184,.22); }
-    .b-transition  { background:rgba(79,142,247,.1);  color:#4f8ef7; border:1px solid rgba(79,142,247,.22); }
-    .b-interim     { background:rgba(245,158,11,.1);  color:#f59e0b; border:1px solid rgba(245,158,11,.22); }
-    .b-noise       { background:rgba(71,85,105,.1);   color:#475569; border:1px solid rgba(71,85,105,.22); }
+    .b-departure   { background:rgba(239,68,68,.09);   color:#ef4444; border:1px solid rgba(239,68,68,.2); }
+    .b-appointment { background:rgba(34,197,94,.09);   color:#22c55e; border:1px solid rgba(34,197,94,.2); }
+    .b-retirement  { background:rgba(148,163,184,.08); color:#94a3b8; border:1px solid rgba(148,163,184,.18); }
+    .b-transition  { background:rgba(79,142,247,.09);  color:#4f8ef7; border:1px solid rgba(79,142,247,.2); }
+    .b-interim     { background:rgba(245,158,11,.09);  color:#f59e0b; border:1px solid rgba(245,158,11,.2); }
+    .b-noise       { background:rgba(71,85,105,.08);   color:#475569; border:1px solid rgba(71,85,105,.18); }
 
-    .sig { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .sig-high   { color:#ef4444; } .sig-high   .dot { background:#ef4444; box-shadow:0 0 5px #ef4444; }
-    .sig-medium { color:#f59e0b; } .sig-medium .dot { background:#f59e0b; box-shadow:0 0 5px #f59e0b; }
-    .sig-low    { color:#94a3b8; } .sig-low    .dot { background:#94a3b8; }
-    .sig-none   { color:#475569; } .sig-none   .dot { background:#475569; }
-
-    .conf-wrap { display: flex; align-items: center; gap: 5px; }
-    .conf-track { width: 36px; height: 3px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
-    .conf-fill  { height: 100%; border-radius: 2px; background: var(--accent); }
-    .conf-val   { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-s); }
+    .sig { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; }
+    .sig-pip { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .sig-high   { color:#ef4444; } .sig-high   .sig-pip { background:#ef4444; box-shadow:0 0 4px #ef4444; }
+    .sig-medium { color:#f59e0b; } .sig-medium .sig-pip { background:#f59e0b; box-shadow:0 0 4px #f59e0b; }
+    .sig-low    { color:#475569; } .sig-low    .sig-pip { background:#475569; }
+    .sig-none   { color:#2d3748; } .sig-none   .sig-pip { background:#2d3748; }
 
     .src-link {
-      font-size: 10px;
-      color: var(--accent);
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-s);
       text-decoration: none;
-      font-family: 'JetBrains Mono', monospace;
-      opacity: .55;
-      transition: opacity .15s;
+      white-space: nowrap;
+      transition: color .12s;
     }
-    .src-link:hover { opacity: 1; }
+    .src-link:hover { color: var(--accent); }
 
-    .empty { padding: 56px; text-align: center; color: var(--text-d); font-size: 13px; line-height: 1.6; }
-    .empty-icon { font-size: 28px; margin-bottom: 12px; opacity: .4; }
-
-    /* ── FOOTER ── */
-    .footer {
-      border-top: 1px solid var(--border);
-      padding: 20px 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 11px;
+    .empty-state {
+      padding: 80px 40px;
+      text-align: center;
       color: var(--text-d);
-      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.8;
     }
-    .footer a { color: var(--text-d); text-decoration: none; }
-    .footer a:hover { color: var(--text-s); }
+
+    /* hidden select for JS compat */
+    #tf, #sf { display: none; }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      .hdr { padding: 0 16px; }
-      .logo-sub, .logo-sep { display: none; }
-      .stats { padding: 16px 16px 0; flex-wrap: wrap; }
-      .stat { min-width: calc(50% - 6px); }
-      .source-bar { margin: 12px 16px 0; font-size: 10px; flex-wrap: wrap; }
-      .filters { padding: 12px 16px 10px; }
-      .filters input { max-width: 100%; }
-      .tbl-wrap { padding: 0 16px 32px; }
-      .footer { padding: 16px; flex-direction: column; gap: 8px; text-align: center; }
+    @media (max-width: 900px) {
+      .nav { padding: 0 20px; }
+      .hero-content { padding: 0 24px 56px; }
+      .hero-wordmark { font-size: clamp(48px, 12vw, 72px); letter-spacing: -2px; }
+      .bento { padding: 32px 20px 0; }
+      .bento-grid { grid-template-columns: 1fr 1fr; }
+      .bento-tile.span2 { grid-column: span 2; }
+      .feed { padding: 32px 20px 0; }
+      .tbl-wrap { padding-bottom: 48px; }
+    }
+    @media (max-width: 600px) {
+      .bento-grid { grid-template-columns: 1fr 1fr; }
+      .bento-tile.span2 { grid-column: span 2; }
+      .bento-num { font-size: 40px; }
+      .bento-tile.span2 .bento-num { font-size: 52px; }
+      .nav-meta { display: none; }
+      .hero-tagline { font-size: 14px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── HEADER ─────────────────────────────────────────────────────── -->
-<header class="hdr">
-  <div class="logo">
-    <div class="logo-icon">
-      <svg width="15" height="15" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+<!-- ── NAV ── -->
+<nav class="nav" id="nav">
+  <div class="nav-logo">
+    <div class="nav-icon">
+      <svg width="14" height="14" viewBox="0 0 18 18" fill="none">
         <path d="M9 2L16 6v6l-7 4L2 12V6L9 2z" stroke="white" stroke-width="1.5"/>
         <circle cx="9" cy="9" r="2" fill="white"/>
       </svg>
     </div>
-    <span class="logo-name">ExecSignal</span>
-    <div class="logo-sep"></div>
-    <span class="logo-sub">C-Suite Movement Intelligence</span>
+    <span class="nav-name">ExecSignal</span>
   </div>
-  <div class="hdr-meta">
-    <div class="live-dot" title="Auto-refreshes every 4 hours"></div>
-    <span id="last-updated">Loading…</span>
-    <span class="src-sep">·</span>
-    <span><span id="filings-checked">—</span> filings checked</span>
-    <button class="refresh-btn" onclick="loadData()" title="Refresh data">↻ Refresh</button>
+  <div class="nav-meta">
+    <div class="live-pip">
+      <div class="live-dot"></div>
+      <span id="last-updated">Loading&hellip;</span>
+    </div>
+    <span id="filings-checked">—</span> filings checked
+    <button class="nav-refresh" onclick="loadData()">↻ Refresh</button>
   </div>
-</header>
+</nav>
 
-<!-- ── STATS ──────────────────────────────────────────────────────── -->
-<div class="stats">
-  <div class="stat">
-    <div class="stat-lbl">Total Movements</div>
-    <div class="stat-val c-blue" id="st-total">—</div>
-    <div class="stat-sub">Last 30 days</div>
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-grid-lines"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">SEC EDGAR &middot; Item 5.02 &middot; Real-time</div>
+    <h1 class="hero-wordmark">ExecSignal</h1>
+    <p class="hero-tagline">Know when a C-suite seat opens before anyone else does. Sourced directly from SEC 8-K filings.</p>
+    <div class="hero-scroll-cue">
+      <div class="hero-scroll-line"></div>
+      <span>Live feed below</span>
+    </div>
   </div>
-  <div class="stat">
-    <div class="stat-lbl">High Signal</div>
-    <div class="stat-val c-red" id="st-high">—</div>
-    <div class="stat-sub">Departures &amp; interims</div>
-  </div>
-  <div class="stat">
-    <div class="stat-lbl">Medium Signal</div>
-    <div class="stat-val c-amb" id="st-med">—</div>
-    <div class="stat-sub">Retirements · no successor</div>
-  </div>
-  <div class="stat">
-    <div class="stat-lbl">Appointments</div>
-    <div class="stat-val c-grn" id="st-appt">—</div>
-    <div class="stat-sub">New hires &amp; promotions</div>
-  </div>
-  <div class="stat">
-    <div class="stat-lbl">Source</div>
-    <div class="stat-val c-dim" style="font-size:15px;padding-top:4px;">EDGAR</div>
-    <div class="stat-sub">SEC 8-K · Item 5.02 · public companies</div>
-  </div>
-</div>
+</section>
 
-<!-- ── SOURCE BAR ─────────────────────────────────────────────────── -->
-<div class="source-bar">
-  <div class="live-dot"></div>
-  <span>Sourced from <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&type=8-K&dateb=&owner=include&count=40" target="_blank" rel="noopener">SEC EDGAR</a> 8-K filings, Item 5.02 (Departure / Appointment of Certain Officers)</span>
-  <span class="src-sep">·</span>
-  <span>Parsed and classified by AI</span>
-  <span class="src-sep">·</span>
-  <span>Updated every 4 hours</span>
-  <span class="src-sep">·</span>
-  <span>Records below confidence threshold automatically excluded</span>
-</div>
-
-<!-- ── FILTERS ────────────────────────────────────────────────────── -->
-<div class="filters">
-  <input type="text" id="srch" placeholder="Search company, executive, or role…" oninput="filter()" aria-label="Search">
-  <select id="tf" onchange="filter()" aria-label="Filter by movement type">
-    <option value="">All movement types</option>
-    <option value="departure">Departure</option>
-    <option value="appointment">Appointment</option>
-    <option value="retirement">Retirement</option>
-    <option value="interim">Interim</option>
-    <option value="transition">Transition</option>
-  </select>
-  <select id="sf" onchange="filter()" aria-label="Filter by signal">
-    <option value="">All signal levels</option>
-    <option value="high">High</option>
-    <option value="medium">Medium</option>
-    <option value="low">Low</option>
-  </select>
-  <button class="btn-sm" id="noise-btn" onclick="toggleNoise()">Hide Noise</button>
-  <button class="btn-sm" onclick="exportCSV()">↓ Export CSV</button>
-  <span class="row-count" id="rc">— results</span>
-</div>
-
-<!-- ── TABLE ──────────────────────────────────────────────────────── -->
-<div class="tbl-wrap">
-  <div class="tbl-box">
-    <table>
-      <thead>
-        <tr>
-          <th>Filed</th>
-          <th>Company</th>
-          <th>Executive</th>
-          <th>Movement</th>
-          <th>Effective</th>
-          <th>Details</th>
-          <th>Confidence</th>
-          <th>Signal</th>
-          <th>Filing</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
+<!-- ── BENTO STATS ── -->
+<section class="bento">
+  <div class="bento-grid">
+    <div class="bento-tile span2">
+      <div class="bento-num c-blue" id="st-total">—</div>
+      <div class="bento-lbl">Movements tracked</div>
+      <div class="bento-sub">Last 30 days</div>
+    </div>
+    <div class="bento-tile">
+      <div class="bento-num c-red" id="st-high">—</div>
+      <div class="bento-lbl">High signal</div>
+      <div class="bento-sub">Departures &amp; interims</div>
+    </div>
+    <div class="bento-tile">
+      <div class="bento-num c-amb" id="st-medium">—</div>
+      <div class="bento-lbl">Medium signal</div>
+      <div class="bento-sub">Retirements</div>
+    </div>
+    <div class="bento-tile span2">
+      <div class="bento-num c-grn" id="st-appt">—</div>
+      <div class="bento-lbl">Appointments</div>
+      <div class="bento-sub">New hires &amp; transitions</div>
+    </div>
+    <div class="bento-tile">
+      <div class="bento-num c-dim">~15</div>
+      <div class="bento-lbl">Est. daily volume</div>
+      <div class="bento-sub">After noise filter</div>
+    </div>
+    <div class="bento-tile">
+      <div class="bento-num c-dim">4h</div>
+      <div class="bento-lbl">Update cadence</div>
+      <div class="bento-sub">GitHub Actions cron</div>
+    </div>
   </div>
-</div>
+</section>
 
-<!-- ── FOOTER ─────────────────────────────────────────────────────── -->
-<footer class="footer">
-  <span>ExecSignal &mdash; Executive Movement Intelligence</span>
-  <span>Data sourced from <a href="https://efts.sec.gov" target="_blank" rel="noopener">SEC EDGAR</a> public filings &middot; Not investment advice</span>
-</footer>
+<!-- ── MOVEMENT FEED ── -->
+<section class="feed">
+  <div class="feed-header">
+    <span class="feed-title">Movement Feed</span>
+    <span class="feed-source">
+      <div class="live-dot" style="width:5px;height:5px;"></div>
+      Source: <a href="https://efts.sec.gov/LATEST/search-index" target="_blank" rel="noopener">SEC EDGAR</a>
+      &middot; Item 5.02 &middot; Parsed by Claude Haiku &middot; Confidence &ge;0.70
+    </span>
+  </div>
+
+  <div class="filter-row">
+    <div class="pills" id="pills">
+      <button class="pill on"  data-type="">All</button>
+      <button class="pill" data-type="departure">Departure</button>
+      <button class="pill" data-type="appointment">Appointment</button>
+      <button class="pill" data-type="retirement">Retirement</button>
+      <button class="pill" data-type="interim">Interim</button>
+      <button class="pill" data-type="transition">Transition</button>
+    </div>
+    <input class="filter-input" type="text" id="srch" placeholder="Search company, exec&hellip;" oninput="filter()">
+    <button class="btn-export" onclick="exportCSV()">Export CSV</button>
+    <button class="btn-noise" id="noise-btn" onclick="toggleNoise()">Hide noise</button>
+    <span class="row-count" id="rc">— rows</span>
+  </div>
+
+  <!-- hidden selects so filter() JS works unchanged -->
+  <select id="tf" onchange="filter()"><option value=""></option></select>
+  <select id="sf" onchange="filter()"><option value=""></option></select>
+
+  <div class="tbl-wrap">
+    <div class="tbl-box">
+      <table>
+        <thead>
+          <tr>
+            <th>Filed</th>
+            <th>Company</th>
+            <th>Executive</th>
+            <th>Type</th>
+            <th>Eff. Date</th>
+            <th>Context</th>
+            <th>Signal</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
 <script>
-  const DATA = [];
-  let _filtered = [];
-  let hideNoise = false;
+// ── Data ──────────────────────────────────────────────────────────────────
+const DATA = [];
+let _filtered = [];
+let hideNoise = false;
 
-  const TLABEL = {
-    departure:'Departure', appointment:'Appointment', retirement:'Retirement',
-    transition:'Transition', interim:'Interim', noise:'Noise'
-  };
-  const SLABEL = { high:'High', medium:'Medium', low:'Low', none:'None' };
-
-  // ── DATA ────────────────────────────────────────────────────────────────────
-
-  async function loadData() {
-    document.getElementById('last-updated').textContent = 'Refreshing…';
-    try {
-      const r = await fetch('data/movements.json?t=' + Date.now());
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      const json = await r.json();
-
-      DATA.length = 0;
-      DATA.push(...(json.movements || []));
-
-      const upd = document.getElementById('last-updated');
-      const fc  = document.getElementById('filings-checked');
-      upd.textContent = json.updated_at
-        ? 'Updated ' + new Date(json.updated_at).toLocaleString('en-US',{
-            month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'
-          })
-        : '—';
-      if (fc) fc.textContent = json.total_filings_checked ?? '—';
-
-      updateStats();
-      filter();
-    } catch(e) {
-      console.error(e);
-      document.getElementById('last-updated').textContent = 'Load error';
-      document.getElementById('tbody').innerHTML =
-        '<tr><td colspan="9"><div class="empty"><div class="empty-icon">⚠</div>Could not load data. If running locally, serve via a local server rather than opening file:// directly.</div></td></tr>';
-    }
-  }
-
-  function updateStats() {
-    const hi   = DATA.filter(m => m.signal === 'high').length;
-    const med  = DATA.filter(m => m.signal === 'medium').length;
-    const appt = DATA.filter(m => m.movement_type === 'appointment').length;
-    document.getElementById('st-total').textContent = DATA.length || '—';
-    document.getElementById('st-high').textContent  = hi;
-    document.getElementById('st-med').textContent   = med;
-    document.getElementById('st-appt').textContent  = appt;
-  }
-
-  // ── RENDER ──────────────────────────────────────────────────────────────────
-
-  function esc(s) {
-    return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : '';
-  }
-
-  function badge(t) {
-    return '<span class="badge b-'+(t||'noise')+'">'+(TLABEL[t]||t)+'</span>';
-  }
-
-  function sigHtml(s) {
-    const cls = ['high','medium','low'].includes(s) ? s : 'none';
-    return '<div class="sig sig-'+cls+'"><div class="dot"></div>'+(SLABEL[cls]||'—')+'</div>';
-  }
-
-  function confHtml(c) {
-    if (c == null) return '<span style="color:var(--text-d)">—</span>';
-    const pct = Math.round(c * 100);
-    return '<div class="conf-wrap"><div class="conf-track"><div class="conf-fill" style="width:'+pct+'%"></div></div><span class="conf-val">'+c.toFixed(2)+'</span></div>';
-  }
-
-  function render(data) {
-    _filtered = data;
-    const tbody = document.getElementById('tbody');
-    tbody.innerHTML = '';
-
-    if (!data.length) {
-      tbody.innerHTML = '<tr><td colspan="9"><div class="empty"><div class="empty-icon">◌</div>No movements match the current filters.</div></td></tr>';
-      document.getElementById('rc').textContent = '0 results';
-      return;
-    }
-
-    const frag = document.createDocumentFragment();
-    data.forEach(m => {
-      const tr = document.createElement('tr');
-      tr.setAttribute('data-t', m.movement_type || '');
-
-      const successorLine = m.successor
-        ? '<div class="ctx-sub">Successor: '+esc(m.successor)+'</div>' : '';
-      const priorLine = m.prior_company
-        ? '<div class="ctx-sub">Prior: '+esc(m.prior_company)+'</div>' : '';
-
-      tr.innerHTML =
-        '<td class="td-date">'+esc(m.filed_date||'—')+'</td>'+
-        '<td>'+
-          '<div class="co-name">'+esc(m.company||'—')+'</div>'+
-          (m.ticker ? '<span class="ticker">'+esc(m.ticker)+'</span>' : '')+
-        '</td>'+
-        '<td>'+
-          '<div class="exec-name">'+esc(m.executive_name||'—')+'</div>'+
-          (m.role ? '<div class="exec-role">'+esc(m.role)+'</div>' : '')+
-        '</td>'+
-        '<td>'+badge(m.movement_type)+'</td>'+
-        '<td class="td-date">'+esc(m.effective_date||'—')+'</td>'+
-        '<td>'+
-          (m.reason ? '<div class="ctx">'+esc(m.reason)+'</div>' : '')+
-          successorLine+priorLine+
-        '</td>'+
-        '<td>'+confHtml(m.confidence)+'</td>'+
-        '<td>'+sigHtml(m.signal)+'</td>'+
-        '<td>'+
-          (m.source_url
-            ? '<a href="'+esc(m.source_url)+'" target="_blank" rel="noopener" class="src-link">SEC 8-K →</a>'
-            : '—')+
-        '</td>';
-      frag.appendChild(tr);
-    });
-
-    tbody.appendChild(frag);
-    document.getElementById('rc').textContent =
-      data.length.toLocaleString() + ' result' + (data.length !== 1 ? 's' : '');
-  }
-
-  // ── FILTER ──────────────────────────────────────────────────────────────────
-
-  function toggleNoise() {
-    hideNoise = !hideNoise;
-    const btn = document.getElementById('noise-btn');
-    btn.classList.toggle('on', hideNoise);
-    btn.textContent = hideNoise ? 'Show Noise' : 'Hide Noise';
+async function loadData() {
+  document.getElementById('last-updated').textContent = 'Refreshing…';
+  try {
+    const r = await fetch('data/movements.json?t=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const json = await r.json();
+    DATA.length = 0;
+    DATA.push(...(json.movements || []));
+    const el = document.getElementById('last-updated');
+    const fc = document.getElementById('filings-checked');
+    if (el) el.textContent = json.updated_at
+      ? 'Updated ' + new Date(json.updated_at).toLocaleString('en-US', {
+          month: 'short', day: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        })
+      : '—';
+    if (fc) fc.textContent = json.total_filings_checked ?? '—';
+    updateStats();
     filter();
+  } catch (e) {
+    console.error(e);
+    document.getElementById('last-updated').textContent = 'Load error';
+    document.getElementById('tbody').innerHTML =
+      '<tr><td colspan="8"><div class="empty-state">Could not load live data.<br>If running locally, open via a server: <code>npx serve .</code></div></td></tr>';
   }
+}
 
-  function filter() {
-    const s  = document.getElementById('srch').value.toLowerCase().trim();
-    const t  = document.getElementById('tf').value;
-    const sg = document.getElementById('sf').value;
+function updateStats() {
+  const total = DATA.length;
+  const high  = DATA.filter(m => m.signal === 'high').length;
+  const med   = DATA.filter(m => m.signal === 'medium').length;
+  const appt  = DATA.filter(m => m.movement_type === 'appointment').length;
+  document.getElementById('st-total').textContent  = total || '—';
+  document.getElementById('st-high').textContent   = high  || '0';
+  document.getElementById('st-medium').textContent = med   || '0';
+  document.getElementById('st-appt').textContent   = appt  || '0';
+}
 
-    const out = DATA.filter(m => {
-      if (hideNoise && m.movement_type === 'noise') return false;
-      const ms = !s || [m.company, m.executive_name, m.role].some(v => v && v.toLowerCase().includes(s));
-      const mt = !t  || m.movement_type === t;
-      const msi = !sg || m.signal === sg;
-      return ms && mt && msi;
-    });
+// ── Render ────────────────────────────────────────────────────────────────
+const TLABEL = {
+  departure:'Departure', appointment:'Appointment', retirement:'Retirement',
+  transition:'Transition', interim:'Interim', noise:'Noise'
+};
+const SLABEL = { high:'High', medium:'Medium', low:'Low', none:'None' };
 
-    render(out);
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function badge(t) {
+  return '<span class="badge b-' + (t||'noise') + '">' + (TLABEL[t] || t || '—') + '</span>';
+}
+
+function sig(s) {
+  const lvl = s || 'none';
+  return '<div class="sig sig-' + lvl + '"><div class="sig-pip"></div>' + (SLABEL[lvl] || lvl) + '</div>';
+}
+
+function render(data) {
+  _filtered = data;
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state">No matching movements.</div></td></tr>';
+    document.getElementById('rc').textContent = '0 rows';
+    return;
   }
+  data.forEach(m => {
+    const tr = document.createElement('tr');
+    const successorLine = m.successor
+      ? '<div class="ctx-sub">Successor: ' + esc(m.successor) + '</div>' : '';
+    const priorLine = m.prior_company
+      ? '<div class="ctx-sub">Prior: ' + esc(m.prior_company) + '</div>' : '';
+    tr.innerHTML =
+      '<td class="td-date">' + esc(m.filed_date || '—') + '</td>' +
+      '<td>' +
+        '<div class="co-name">' + esc(m.company || '—') + '</div>' +
+        (m.ticker ? '<span class="ticker">' + esc(m.ticker) + '</span>' : '') +
+      '</td>' +
+      '<td>' +
+        '<div class="exec-name">' + esc(m.executive_name || '—') + '</div>' +
+        '<div class="exec-role">' + esc(m.role || '') + '</div>' +
+      '</td>' +
+      '<td>' + badge(m.movement_type) + '</td>' +
+      '<td class="td-date">' + esc(m.effective_date || '—') + '</td>' +
+      '<td>' +
+        '<div class="ctx-text">' + esc(m.reason || '') + '</div>' +
+        successorLine + priorLine +
+      '</td>' +
+      '<td>' + sig(m.signal) + '</td>' +
+      '<td><a href="' + esc(m.source_url) + '" target="_blank" rel="noopener" class="src-link">SEC 8-K &rarr;</a></td>';
+    tbody.appendChild(tr);
+  });
+  document.getElementById('rc').textContent = data.length + ' row' + (data.length !== 1 ? 's' : '');
+}
 
-  // ── EXPORT ──────────────────────────────────────────────────────────────────
+// ── Filter ────────────────────────────────────────────────────────────────
+function toggleNoise() {
+  hideNoise = !hideNoise;
+  const btn = document.getElementById('noise-btn');
+  btn.classList.toggle('on', hideNoise);
+  btn.textContent = hideNoise ? 'Show noise' : 'Hide noise';
+  filter();
+}
 
-  function exportCSV() {
-    const rows = _filtered.length ? _filtered : DATA;
-    const cols = ['filed_date','company','ticker','executive_name','role',
-                  'movement_type','effective_date','reason','successor',
-                  'prior_company','confidence','signal','source_url'];
-    const csv = [
-      cols.join(','),
-      ...rows.map(m => cols.map(k => {
-        const v = m[k] != null ? String(m[k]) : '';
-        return '"' + v.replace(/"/g, '""') + '"';
-      }).join(','))
-    ].join('\n');
+function filter() {
+  const s  = document.getElementById('srch').value.toLowerCase();
+  const t  = document.getElementById('tf').value;
+  const sg = document.getElementById('sf').value;
+  const out = DATA.filter(m => {
+    if (hideNoise && m.movement_type === 'noise') return false;
+    const ms  = !s || [m.company, m.executive_name, m.role].some(v => v && v.toLowerCase().includes(s));
+    const mt  = !t  || m.movement_type === t;
+    const msi = !sg || m.signal === sg;
+    return ms && mt && msi;
+  });
+  render(out);
+}
 
-    const a = document.createElement('a');
-    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-    a.download = 'execsignal-' + new Date().toISOString().slice(0,10) + '.csv';
-    a.click();
-  }
+// ── Pill tabs ─────────────────────────────────────────────────────────────
+document.getElementById('pills').addEventListener('click', e => {
+  const pill = e.target.closest('.pill');
+  if (!pill) return;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('on'));
+  pill.classList.add('on');
+  document.getElementById('tf').value = pill.dataset.type;
+  filter();
+});
 
-  // ── INIT ────────────────────────────────────────────────────────────────────
+// ── CSV export ────────────────────────────────────────────────────────────
+function exportCSV() {
+  const rows = _filtered.length ? _filtered : DATA;
+  const cols = ['filed_date','company','ticker','executive_name','role','movement_type',
+                'effective_date','reason','successor','prior_company','confidence','signal','source_url'];
+  const header = cols.join(',');
+  const lines = rows.map(m =>
+    cols.map(k => {
+      const v = m[k] != null ? String(m[k]) : '';
+      return '"' + v.replace(/"/g, '""') + '"';
+    }).join(',')
+  );
+  const csv = [header, ...lines].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'execsignal-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
 
-  loadData();
+// ── Scroll: nav background ────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 80);
+}, { passive: true });
+
+// ── Init ──────────────────────────────────────────────────────────────────
+loadData();
 </script>
 </body>
 </html>
