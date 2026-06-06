@@ -109,22 +109,21 @@
     /* ── HERO ── */
     .hero {
       position: relative;
-      height: 100vh;
-      min-height: 600px;
+      min-height: 88vh;
       background: var(--bg);
       overflow: hidden;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
+      padding-top: 60px; /* nav offset */
     }
     .hero::before {
       content: '';
       position: absolute;
       inset: 0;
       background: linear-gradient(
-        180deg,
-        rgba(0,0,0,0.45) 0%,
-        rgba(0,0,0,0.05) 55%,
-        rgba(0,0,0,0.55) 100%
+        135deg,
+        rgba(79,142,247,0.04) 0%,
+        transparent 60%
       );
       z-index: 1;
       pointer-events: none;
@@ -141,36 +140,50 @@
     .hero-content {
       position: relative;
       z-index: 2;
-      padding: 0 48px 72px;
-      max-width: 1100px;
+      padding: 0 48px;
+      width: 100%;
+      max-width: 1280px;
+      display: flex;
+      align-items: center;
+      gap: 48px;
+    }
+    .hero-left {
+      flex: 0 0 auto;
+      max-width: 500px;
+    }
+    .hero-right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
     }
     .hero-eyebrow {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 2px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
       color: var(--accent);
       margin-bottom: 20px;
-      opacity: 0.9;
+      opacity: 0.8;
     }
     .hero-wordmark {
-      font-size: clamp(64px, 9vw, 112px);
+      font-size: clamp(52px, 7vw, 96px);
       font-weight: 700;
-      letter-spacing: -4px;
+      letter-spacing: -3px;
       line-height: 0.92;
       color: var(--text-p);
     }
     .hero-tagline {
-      margin-top: 22px;
-      font-size: 16px;
+      margin-top: 20px;
+      font-size: 15px;
       font-weight: 300;
       color: var(--text-s);
-      letter-spacing: 0;
-      max-width: 440px;
-      line-height: 1.6;
+      max-width: 400px;
+      line-height: 1.7;
     }
     .hero-scroll-cue {
-      margin-top: 40px;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -182,6 +195,80 @@
     .hero-scroll-line {
       width: 28px; height: 1px;
       background: var(--text-d);
+    }
+
+    /* ── HERO CARDS ── */
+    .hero-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: card-in 0.45s ease forwards;
+    }
+    .hero-card:nth-child(2) { animation-delay: 0.1s; }
+    .hero-card:nth-child(3) { animation-delay: 0.2s; }
+    @keyframes card-in { to { opacity: 1; transform: none; } }
+    .hero-card-pip {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .hero-card-exec {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hero-card-sub {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-s);
+      margin-top: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .hero-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .hero-card-type {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .hero-card-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--text-d);
+    }
+    .hero-card-sep {
+      width: 1px; height: 10px;
+      background: var(--border);
+      display: inline-block;
+    }
+    .hero-cards-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-d);
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     /* ── BENTO ── */
@@ -589,9 +676,13 @@
     }
 
     /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      .hero-content { flex-direction: column; align-items: flex-start; padding: 40px 24px 56px; gap: 40px; }
+      .hero-left { max-width: 100%; }
+      .hero-right { width: 100%; }
+    }
     @media (max-width: 900px) {
       .nav { padding: 0 20px; }
-      .hero-content { padding: 0 24px 56px; }
       .hero-wordmark { font-size: clamp(48px, 12vw, 72px); letter-spacing: -2px; }
       .bento { padding: 32px 20px 0; }
       .bento-grid { grid-template-columns: 1fr 1fr; }
@@ -606,6 +697,7 @@
       .bento-tile.span2 .bento-num { font-size: 52px; }
       .nav-meta { display: none; }
       .hero-tagline { font-size: 14px; }
+      .hero-right { display: none; } /* hide cards on very small screens */
     }
   </style>
 </head>
@@ -636,19 +728,41 @@
 <section class="hero">
   <div class="hero-grid-lines"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow">SEC EDGAR &middot; Item 5.02 &middot; Real-time</div>
-    <h1 class="hero-wordmark">ExecSignal</h1>
-    <p class="hero-tagline">Know when a C-suite seat opens before anyone else does. Sourced directly from SEC 8-K filings.</p>
-    <div style="display:flex;align-items:center;gap:20px;margin-top:40px;flex-wrap:wrap;">
-      <a class="hero-cta" href="#feed" onclick="document.getElementById('feed').scrollIntoView({behavior:'smooth'});return false;">
-        View Live Feed
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-      </a>
-      <div class="hero-scroll-cue" style="margin-top:0;">
-        <div class="hero-scroll-line"></div>
-        <span>Updated every 4 hours via SEC EDGAR</span>
+
+    <!-- LEFT: wordmark + CTA -->
+    <div class="hero-left">
+      <div class="hero-eyebrow">SEC EDGAR &middot; Item 5.02 &middot; Real-time</div>
+      <h1 class="hero-wordmark">Exec<br>Signal</h1>
+      <p class="hero-tagline">Know when a C-suite seat opens before anyone else does. Sourced directly from SEC 8-K filings — before the news cycle picks it up.</p>
+      <div style="display:flex;align-items:center;gap:20px;margin-top:36px;flex-wrap:wrap;">
+        <a class="hero-cta" href="#feed" onclick="document.getElementById('feed').scrollIntoView({behavior:'smooth'});return false;">
+          View Live Feed
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        </a>
+        <div class="hero-scroll-cue">
+          <div class="hero-scroll-line"></div>
+          <span>4-hour refresh cadence</span>
+        </div>
       </div>
     </div>
+
+    <!-- RIGHT: live movement cards -->
+    <div class="hero-right">
+      <div class="hero-cards-label">
+        <div class="live-dot"></div>
+        Recent movements
+      </div>
+      <div id="hero-cards">
+        <!-- populated by JS after data loads -->
+        <div class="hero-card" style="opacity:0.3;">
+          <div class="hero-card-pip" style="background:var(--text-d);"></div>
+          <div style="flex:1;">
+            <div class="hero-card-exec" style="color:var(--text-d);">Loading&hellip;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -819,6 +933,7 @@ async function loadData() {
     if (fc) fc.textContent = json.total_filings_checked ?? '—';
     updateStats();
     filter();
+    renderHeroCards();
   } catch (e) {
     console.error(e);
     document.getElementById('last-updated').textContent = 'Load error';
@@ -838,6 +953,47 @@ function updateStats() {
   document.getElementById('st-appt').textContent    = appt;
   const cos = new Set(DATA.map(m => m.company)).size;
   document.getElementById('st-cos').textContent     = cos;
+}
+
+// ── Hero cards ────────────────────────────────────────────────────────────
+const TYPE_COLOR = {
+  departure:   '#ef4444',
+  appointment: '#22c55e',
+  interim:     '#f59e0b',
+  retirement:  '#94a3b8',
+  transition:  '#4f8ef7',
+};
+const SIG_ORDER = { high: 0, medium: 1, low: 2, none: 3 };
+
+function renderHeroCards() {
+  const container = document.getElementById('hero-cards');
+  if (!container || !DATA.length) return;
+  const top3 = [...DATA]
+    .sort((a, b) => (SIG_ORDER[a.signal] ?? 3) - (SIG_ORDER[b.signal] ?? 3))
+    .slice(0, 3);
+  container.innerHTML = top3.map(m => {
+    const color = TYPE_COLOR[m.movement_type] || '#475569';
+    const type  = m.movement_type
+      ? m.movement_type.charAt(0).toUpperCase() + m.movement_type.slice(1)
+      : '—';
+    const tickerHtml = m.ticker
+      ? `<span class="ticker" style="margin-left:4px;">${esc(m.ticker)}</span>` : '';
+    return `
+      <div class="hero-card">
+        <div class="hero-card-pip" style="background:${color};box-shadow:0 0 6px ${color}66;"></div>
+        <div style="flex:1;min-width:0;">
+          <div class="hero-card-exec">${esc(m.executive_name || '—')}</div>
+          <div class="hero-card-sub">
+            ${esc(m.role || '')}${m.role ? ' &middot;' : ''} ${esc(m.company || '—')}${tickerHtml}
+          </div>
+          <div class="hero-card-meta">
+            <span class="hero-card-type" style="color:${color};">${type}</span>
+            <span class="hero-card-sep"></span>
+            <span class="hero-card-date">${esc(m.filed_date || '—')}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 // ── Render ────────────────────────────────────────────────────────────────
