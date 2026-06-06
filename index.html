@@ -7,7 +7,7 @@
   <meta name="description" content="Real-time executive movement intelligence sourced from SEC EDGAR 8-K filings.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg:        #0a0a0a;
@@ -74,7 +74,7 @@
       display: flex;
       align-items: center;
       gap: 20px;
-      font-family: 'Inter', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 400;
       color: var(--text-d);
@@ -384,14 +384,15 @@
     tbody td { padding: 14px 14px; font-size: 12px; vertical-align: top; }
 
     .td-date {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 400;
       color: var(--text-d);
       white-space: nowrap;
-      letter-spacing: 0.2px;
     }
     .co-name { font-weight: 500; font-size: 13px; line-height: 1.3; }
     .ticker {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       font-weight: 500;
       color: var(--accent);
@@ -452,8 +453,140 @@
       line-height: 1.8;
     }
 
+    /* sticky thead */
+    thead { position: sticky; top: 0; z-index: 10; }
+
     /* hidden select for JS compat */
     #tf, #sf { display: none; }
+
+    /* ── HOW IT WORKS ── */
+    .hiw {
+      padding: 72px 40px 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .hiw-step {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 28px;
+    }
+    .hiw-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+      opacity: 0.7;
+    }
+    .hiw-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.4px;
+      margin-bottom: 10px;
+    }
+    .hiw-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--text-s);
+      line-height: 1.7;
+    }
+    .hiw-tag {
+      display: inline-block;
+      margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-d);
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 8px;
+    }
+
+    /* ── HERO CTA ── */
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 36px;
+      padding: 11px 22px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s;
+      letter-spacing: -0.1px;
+    }
+    .hero-cta:hover { opacity: 0.85; }
+
+    /* ── SIGNAL PILLS ROW ── */
+    .filter-label {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-d);
+      white-space: nowrap;
+    }
+    .filter-sep {
+      width: 1px;
+      height: 16px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 80px;
+      border-top: 1px solid var(--border);
+      padding: 32px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-name {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-links a {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-d);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-links a:hover { color: var(--text-s); }
+    .footer-right {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--text-d);
+      text-align: right;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 900px) {
+      .hiw { grid-template-columns: 1fr; padding: 48px 20px 0; }
+      .footer { padding: 24px 20px; flex-direction: column; align-items: flex-start; }
+      .footer-right { text-align: left; }
+    }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
@@ -506,10 +639,38 @@
     <div class="hero-eyebrow">SEC EDGAR &middot; Item 5.02 &middot; Real-time</div>
     <h1 class="hero-wordmark">ExecSignal</h1>
     <p class="hero-tagline">Know when a C-suite seat opens before anyone else does. Sourced directly from SEC 8-K filings.</p>
-    <div class="hero-scroll-cue">
-      <div class="hero-scroll-line"></div>
-      <span>Live feed below</span>
+    <div style="display:flex;align-items:center;gap:20px;margin-top:40px;flex-wrap:wrap;">
+      <a class="hero-cta" href="#feed" onclick="document.getElementById('feed').scrollIntoView({behavior:'smooth'});return false;">
+        View Live Feed
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+      </a>
+      <div class="hero-scroll-cue" style="margin-top:0;">
+        <div class="hero-scroll-line"></div>
+        <span>Updated every 4 hours via SEC EDGAR</span>
+      </div>
     </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="hiw">
+  <div class="hiw-step">
+    <div class="hiw-num">01 — INGEST</div>
+    <div class="hiw-title">SEC EDGAR monitors every 8-K</div>
+    <div class="hiw-desc">Every public company must file an 8-K within four business days of a senior executive departure, appointment, or role change. ExecSignal polls Item 5.02 automatically.</div>
+    <span class="hiw-tag">efts.sec.gov · Item 5.02</span>
+  </div>
+  <div class="hiw-step">
+    <div class="hiw-num">02 — PARSE</div>
+    <div class="hiw-title">Claude Haiku extracts structured data</div>
+    <div class="hiw-desc">Raw filing text is run through Claude Haiku to extract executive name, role, movement type, effective date, reason, and successor — with a confidence score on every record.</div>
+    <span class="hiw-tag">Claude Haiku · confidence ≥ 0.70</span>
+  </div>
+  <div class="hiw-step">
+    <div class="hiw-num">03 — SURFACE</div>
+    <div class="hiw-title">Recruiters get first-mover signal</div>
+    <div class="hiw-desc">Movements are scored by signal strength — departures and interim appointments rank highest. Recruiters see the feed before the news cycle picks it up.</div>
+    <span class="hiw-tag">4-hour refresh · CSV export</span>
   </div>
 </section>
 
@@ -537,20 +698,20 @@
       <div class="bento-sub">New hires &amp; transitions</div>
     </div>
     <div class="bento-tile">
-      <div class="bento-num c-dim">~15</div>
-      <div class="bento-lbl">Est. daily volume</div>
-      <div class="bento-sub">After noise filter</div>
+      <div class="bento-num c-dim" id="st-cos">—</div>
+      <div class="bento-lbl">Companies tracked</div>
+      <div class="bento-sub">Unique public filers</div>
     </div>
     <div class="bento-tile">
-      <div class="bento-num c-dim">4h</div>
-      <div class="bento-lbl">Update cadence</div>
-      <div class="bento-sub">GitHub Actions cron</div>
+      <div class="bento-num c-dim" style="font-size:28px;letter-spacing:-1px;line-height:1.2;margin-bottom:12px;font-family:'JetBrains Mono',monospace;">SEC<br>EDGAR</div>
+      <div class="bento-lbl">Primary data source</div>
+      <div class="bento-sub">Legally required disclosures</div>
     </div>
   </div>
 </section>
 
 <!-- ── MOVEMENT FEED ── -->
-<section class="feed">
+<section class="feed" id="feed">
   <div class="feed-header">
     <span class="feed-title">Movement Feed</span>
     <span class="feed-source">
@@ -561,6 +722,7 @@
   </div>
 
   <div class="filter-row">
+    <span class="filter-label">Type</span>
     <div class="pills" id="pills">
       <button class="pill on"  data-type="">All</button>
       <button class="pill" data-type="departure">Departure</button>
@@ -569,8 +731,17 @@
       <button class="pill" data-type="interim">Interim</button>
       <button class="pill" data-type="transition">Transition</button>
     </div>
+    <div class="filter-sep"></div>
+    <span class="filter-label">Signal</span>
+    <div class="pills" id="sig-pills">
+      <button class="pill on" data-sig="">All</button>
+      <button class="pill" data-sig="high" style="color:#ef4444;">High</button>
+      <button class="pill" data-sig="medium" style="color:#f59e0b;">Medium</button>
+      <button class="pill" data-sig="low">Low</button>
+    </div>
+    <div class="filter-sep"></div>
     <input class="filter-input" type="text" id="srch" placeholder="Search company, exec&hellip;" oninput="filter()">
-    <button class="btn-export" onclick="exportCSV()">Export CSV</button>
+    <button class="btn-export" onclick="exportCSV()">↓ CSV</button>
     <button class="btn-noise" id="noise-btn" onclick="toggleNoise()">Hide noise</button>
     <span class="row-count" id="rc">— rows</span>
   </div>
@@ -599,6 +770,29 @@
     </div>
   </div>
 </section>
+
+<!-- ── FOOTER ── -->
+<footer class="footer">
+  <div class="footer-logo">
+    <div class="nav-icon" style="width:22px;height:22px;">
+      <svg width="12" height="12" viewBox="0 0 18 18" fill="none">
+        <path d="M9 2L16 6v6l-7 4L2 12V6L9 2z" stroke="white" stroke-width="1.5"/>
+        <circle cx="9" cy="9" r="2" fill="white"/>
+      </svg>
+    </div>
+    <span class="footer-name">ExecSignal</span>
+  </div>
+  <div class="footer-links">
+    <a href="https://efts.sec.gov/LATEST/search-index" target="_blank" rel="noopener">SEC EDGAR</a>
+    <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&type=8-K&dateb=&owner=include&count=40" target="_blank" rel="noopener">8-K Filings</a>
+    <a href="https://github.com/velasquezbrafael/ExecSignal" target="_blank" rel="noopener">GitHub</a>
+  </div>
+  <div class="footer-right">
+    Data source: SEC EDGAR · Item 5.02<br>
+    Parsed by Claude Haiku · Updated every 4 hours<br>
+    Built by Rafael Velasquez
+  </div>
+</footer>
 
 <script>
 // ── Data ──────────────────────────────────────────────────────────────────
@@ -638,10 +832,12 @@ function updateStats() {
   const high  = DATA.filter(m => m.signal === 'high').length;
   const med   = DATA.filter(m => m.signal === 'medium').length;
   const appt  = DATA.filter(m => m.movement_type === 'appointment').length;
-  document.getElementById('st-total').textContent  = total || '—';
-  document.getElementById('st-high').textContent   = high  || '0';
-  document.getElementById('st-medium').textContent = med   || '0';
-  document.getElementById('st-appt').textContent   = appt  || '0';
+  document.getElementById('st-total').textContent   = total;
+  document.getElementById('st-high').textContent    = high;
+  document.getElementById('st-medium').textContent  = med;
+  document.getElementById('st-appt').textContent    = appt;
+  const cos = new Set(DATA.map(m => m.company)).size;
+  document.getElementById('st-cos').textContent     = cos;
 }
 
 // ── Render ────────────────────────────────────────────────────────────────
@@ -730,9 +926,18 @@ function filter() {
 document.getElementById('pills').addEventListener('click', e => {
   const pill = e.target.closest('.pill');
   if (!pill) return;
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('#pills .pill').forEach(p => p.classList.remove('on'));
   pill.classList.add('on');
   document.getElementById('tf').value = pill.dataset.type;
+  filter();
+});
+
+document.getElementById('sig-pills').addEventListener('click', e => {
+  const pill = e.target.closest('.pill');
+  if (!pill) return;
+  document.querySelectorAll('#sig-pills .pill').forEach(p => p.classList.remove('on'));
+  pill.classList.add('on');
+  document.getElementById('sf').value = pill.dataset.sig;
   filter();
 });
 

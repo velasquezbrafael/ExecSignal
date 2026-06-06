@@ -30,11 +30,46 @@ from html.parser import HTMLParser
 
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
 DATA_PATH = Path(__file__).parent.parent / "data" / "movements.json"
-MAX_FILINGS = 200
+MAX_FILINGS = 100        # EDGAR returns max 100 per page; 100 is plenty
+LOOKBACK_DAYS = 25       # 30+ days causes EDGAR 500; 25 is the safe max
 MIN_SECTION_LEN = 150
-MAX_SECTION_LEN = 3000
+MAX_SECTION_LEN = 4000
 MIN_CONFIDENCE = 0.70
-REQUEST_DELAY = 0.4  # seconds between EDGAR requests
+REQUEST_DELAY = 0.3      # seconds between EDGAR requests
+
+# Pre-filter: sections matching 2+ of these are real movements (not equity plan noise)
+_REAL_SIGNALS = [
+    r"\b(resigned?|resignation)\b",
+    r"\bstepped?\s+down\b",
+    r"\bno longer\s+(serves?|serving)\b",
+    r"\bdeparture\b",
+    r"\bretir(ed|ing|ement)\b",
+    r"\bhas been appointed\b",
+    r"\bappointed\s+[A-Z][a-z]+\s+[A-Z][a-z]+\s+(?:as|to)\b",
+    r"\bnamed\s+[A-Z][a-z]+\s+[A-Z][a-z]+\s+(?:as|to)\b",
+    r"\binterim\s+(?:CEO|CFO|COO|President|Chief)\b",
+    r"\bterminated\b",
+]
+_NOISE_SIGNALS = [
+    r"\bequity\s+(incentive|compensation)\s+plan\b",
+    r"\bstock\s+(option|compensation)\s+plan\b",
+    r"\bshares?\s+(authorized|reserved)\b",
+    r"\bannual\s+meeting\s+of\s+stockholders\b",
+    r"\belected\s+(?:to serve as\s+)?director\b",
+    r"\bre-elected\b",
+]
+
+
+def pre_filter_section(section: str) -> bool:
+    """Return True if section looks like a real executive movement (not noise).
+
+    This runs BEFORE calling Haiku, saving API costs on proxy-season noise.
+    """
+    if len(section) < MIN_SECTION_LEN:
+        return False
+    real_count  = sum(1 for p in _REAL_SIGNALS  if re.search(p, section, re.I))
+    noise_count = sum(1 for p in _NOISE_SIGNALS if re.search(p, section, re.I))
+    return real_count >= 2 and real_count > noise_count
 
 HEADERS = {
     "User-Agent": "ExecSignal research@execsignal.io",
@@ -75,7 +110,7 @@ def strip_html(html: str) -> str:
 
 def fetch_edgar_hits() -> list[dict]:
     now = datetime.now(timezone.utc)
-    start = (now - timedelta(days=14)).strftime("%Y-%m-%d")
+    start = (now - timedelta(days=LOOKBACK_DAYS)).strftime("%Y-%m-%d")
     end = now.strftime("%Y-%m-%d")
 
     url = "https://efts.sec.gov/LATEST/search-index"
@@ -128,23 +163,39 @@ def build_urls(ciks: list, adsh: str) -> tuple[str, str]:
 # ---------------------------------------------------------------------------
 
 def get_primary_doc_filename(index_html: str) -> str | None:
-    """Find the filename of the primary 8-K document from the index page."""
-    # Look for a table row where Type column is exactly "8-K"
-    pattern = re.compile(
-        r'<tr[^>]*>.*?<td[^>]*>\s*8-K\s*</td>.*?href="([^"]+)"',
-        re.IGNORECASE | re.DOTALL,
-    )
-    m = pattern.search(index_html)
-    if m:
-        href = m.group(1)
-        return href.split("/")[-1]
+    """Find the filename of the primary 8-K document from the index page.
 
-    # Fallback: look for .htm files in the index
-    links = re.findall(r'href="([^"]*\.htm)"', index_html, re.IGNORECASE)
+    EDGAR index pages list documents in a table. The primary 8-K document
+    is the first .htm/.html file that is not the index itself and not an
+    exhibit (EX-). We try multiple strategies in order of reliability.
+    """
+    # Strategy 1: find a link inside a row that has an "8-K" type cell
+    # EDGAR table structure: Seq | Description | Document(link) | Type | Size
+    # Both the Description and Type columns may say "8-K"
+    rows = re.findall(r'<tr[^>]*>(.*?)</tr>', index_html, re.I | re.DOTALL)
+    for row in rows:
+        cells = re.findall(r'<td[^>]*>(.*?)</td>', row, re.I | re.DOTALL)
+        row_text = " ".join(cells)
+        # Only consider rows whose Type cell is "8-K" or "8-K/A"
+        if re.search(r'\b8-K(?:/A)?\b', row_text, re.I):
+            hrefs = re.findall(r'href="([^"]+\.htm[l]?)"', row_text, re.I)
+            for href in hrefs:
+                fname = href.split("/")[-1]
+                if fname and not fname.lower().endswith("-index.htm"):
+                    return fname
+
+    # Strategy 2: first .htm link that isn't the index or an exhibit
+    links = re.findall(r'href="([^"]*\.htm[l]?)"', index_html, re.I)
     for link in links:
-        fname = link.split("/")[-1].lower()
-        if not fname.endswith("-index.htm") and fname != "":
-            return link.split("/")[-1]
+        fname = link.split("/")[-1]
+        if not fname: continue
+        fl = fname.lower()
+        if fl.endswith("-index.htm"): continue
+        if fl.endswith("-index.html"): continue
+        # Skip obvious exhibit files
+        if re.match(r'ex-?\d', fl): continue
+        return fname
+
     return None
 
 
@@ -399,6 +450,11 @@ def main():
 
         if not section:
             print("  -> no Item 5.02 section found, skipping")
+            continue
+
+        # Pre-filter: skip equity-plan-only filings without calling Haiku
+        if not pre_filter_section(section):
+            print("  -> pre-filter: noise (equity plan / director election), skipping")
             continue
 
         # Step 3
