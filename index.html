@@ -566,7 +566,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      overflow: hidden;
+      overflow: clip;
     }
     table { width: 100%; border-collapse: collapse; }
     thead th {
@@ -601,6 +601,10 @@
       font-size: 13px;
       line-height: 1.3;
       color: var(--text-p);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
     }
     .ticker {
       font-family: 'JetBrains Mono', monospace;
@@ -627,6 +631,10 @@
       font-size: 14px;
       line-height: 1.25;
       color: var(--text-p);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
     }
     .exec-role {
       font-size: 11px;
@@ -635,6 +643,9 @@
       margin-top: 2px;
       line-height: 1.4;
       max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .ctx-text {
       font-size: 11px;
