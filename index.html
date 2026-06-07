@@ -4,7 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ExecSignal — C-Suite Movement Intelligence</title>
-  <meta name="description" content="Real-time executive movement intelligence sourced from SEC EDGAR 8-K filings.">
+  <meta name="description" content="Real-time executive movement intelligence sourced from SEC EDGAR 8-K filings. Know when a C-suite seat opens before anyone else does.">
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%234f8ef7'/%3E%3Cpath d='M16 5L27 11v10l-11 6.5L5 21V11z' stroke='white' stroke-width='2' fill='none'/%3E%3Ccircle cx='16' cy='16' r='3' fill='white'/%3E%3C/svg%3E">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://velasquezbrafael.github.io/ExecSignal/">
+  <meta property="og:title" content="ExecSignal — C-Suite Movement Intelligence">
+  <meta property="og:description" content="Know when a C-suite seat opens before anyone else does. Real-time executive movements sourced from SEC EDGAR 8-K filings — before the news cycle picks it up.">
+  <meta property="og:site_name" content="ExecSignal">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="ExecSignal — C-Suite Movement Intelligence">
+  <meta name="twitter:description" content="Real-time C-suite movement intelligence from SEC EDGAR 8-K filings.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -104,7 +115,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 130px 0 90px;
+      padding: 96px 0 72px;
     }
     .hero::before {
       content: '';
@@ -504,6 +515,39 @@
       white-space: nowrap;
       font-family: 'JetBrains Mono', monospace;
     }
+
+    /* ── SIGNAL BANNER ── */
+    .signal-banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(239,68,68,0.07);
+      border: 1px solid rgba(239,68,68,0.15);
+      border-radius: 8px;
+      padding: 9px 16px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-s);
+      line-height: 1;
+    }
+    .signal-banner strong { color: var(--red); font-variant-numeric: tabular-nums; }
+    .signal-banner .banner-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 5px var(--red);
+      flex-shrink: 0;
+    }
+    .banner-divider {
+      width: 1px; height: 12px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .banner-note {
+      font-size: 11px;
+      color: var(--text-d);
+    }
     .filter-label {
       font-size: 11px;
       font-weight: 500;
@@ -517,7 +561,7 @@
     }
 
     /* ── TABLE ── */
-    .tbl-wrap { padding-bottom: 80px; }
+    .tbl-wrap { padding-bottom: 40px; }
     .tbl-box {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -544,7 +588,7 @@
     }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover { background: rgba(79,142,247,0.028); }
-    tbody td { padding: 16px 16px; font-size: 13px; vertical-align: top; }
+    tbody td { padding: 10px 14px; font-size: 13px; vertical-align: middle; }
 
     .td-date {
       font-family: 'JetBrains Mono', monospace;
@@ -568,29 +612,35 @@
       border-radius: 3px;
       padding: 1px 5px;
       display: inline-block;
-      margin-top: 5px;
+      margin-top: 3px;
       letter-spacing: 0.5px;
+      text-decoration: none;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    a.ticker:hover {
+      background: var(--accent-20);
+      border-color: rgba(79,142,247,0.35);
     }
     .exec-name {
       font-family: 'Space Grotesk', sans-serif;
       font-weight: 600;
-      font-size: 15px;
+      font-size: 14px;
       line-height: 1.25;
       color: var(--text-p);
     }
     .exec-role {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 400;
       color: var(--text-s);
-      margin-top: 4px;
+      margin-top: 2px;
       line-height: 1.4;
       max-width: 220px;
     }
     .ctx-text {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 400;
       color: var(--text-s);
-      line-height: 1.6;
+      line-height: 1.55;
       max-width: 280px;
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -601,7 +651,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       color: var(--text-d);
-      margin-top: 6px;
+      margin-top: 3px;
     }
 
     .badge {
@@ -652,7 +702,7 @@
 
     /* ── FOOTER ── */
     .footer {
-      margin-top: 80px;
+      margin-top: 48px;
       border-top: 1px solid var(--border);
       padding: 32px 40px;
       display: flex;
@@ -843,6 +893,13 @@
     </span>
   </div>
 
+  <div class="signal-banner" id="signal-banner" style="display:none;">
+    <div class="banner-dot"></div>
+    <span><strong id="banner-high">—</strong> high-signal C-suite departures detected</span>
+    <div class="banner-divider"></div>
+    <span class="banner-note">Real data · SEC EDGAR 8-K filings · Legally required disclosures</span>
+  </div>
+
   <div class="filter-row">
     <span class="filter-label">Type</span>
     <div class="pills" id="pills">
@@ -908,7 +965,7 @@
   <div class="footer-right">
     Data source: SEC EDGAR · Item 5.02<br>
     Parsed by Claude Haiku · Updated every 4 hours<br>
-    Built by Rafael Velasquez
+    Built by <a href="https://linkedin.com/in/rafaelvelasquez" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none;opacity:0.8;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.8">Rafael Velasquez</a>
   </div>
 </footer>
 
@@ -960,6 +1017,13 @@ function updateStats() {
   document.getElementById('st-appt').textContent    = appt;
   const cos = new Set(DATA.map(m => m.company)).size;
   document.getElementById('st-cos').textContent     = cos;
+  // Signal banner
+  const banner = document.getElementById('signal-banner');
+  const bannerHigh = document.getElementById('banner-high');
+  if (banner && bannerHigh && high > 0) {
+    bannerHigh.textContent = high;
+    banner.style.display = 'flex';
+  }
 }
 
 // ── Hero cards ────────────────────────────────────────────────────────────
@@ -1049,7 +1113,7 @@ function render(data) {
       '<td class="td-date">' + esc(m.filed_date || '—') + '</td>' +
       '<td>' +
         '<div class="co-name">' + esc(m.company || '—') + '</div>' +
-        (m.ticker ? '<span class="ticker">' + esc(m.ticker) + '</span>' : '') +
+        (m.ticker ? '<a href="https://stockanalysis.com/stocks/' + esc(m.ticker.toLowerCase()) + '/" target="_blank" rel="noopener" class="ticker">' + esc(m.ticker) + '</a>' : '') +
       '</td>' +
       '<td>' +
         '<div class="exec-name">' + esc(m.executive_name || '—') + '</div>' +
