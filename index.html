@@ -711,6 +711,24 @@
 
     thead { position: sticky; top: 0; z-index: 10; }
 
+    /* ── SORTABLE HEADERS ── */
+    thead th.th-sort { cursor: pointer; }
+    thead th.th-sort:hover { color: var(--text-s); }
+    thead th.th-sort::after { content: ' ↕'; opacity: 0.25; font-size: 8px; vertical-align: middle; }
+    thead th.sort-asc::after  { content: ' ↑'; opacity: 1; color: var(--accent); }
+    thead th.sort-desc::after { content: ' ↓'; opacity: 1; color: var(--accent); }
+
+    /* ── ROW EXPAND ── */
+    tbody tr { cursor: pointer; }
+    tbody tr.row-expanded,
+    tbody tr.row-expanded:hover { background: rgba(79,142,247,0.06); }
+    tbody tr.row-expanded .ctx-text {
+      -webkit-line-clamp: unset;
+      display: block;
+      overflow: visible;
+      max-width: 380px;
+    }
+
     /* ── FOOTER ── */
     .footer {
       margin-top: 48px;
@@ -930,7 +948,15 @@
       <button class="pill" data-sig="low">Low</button>
     </div>
     <div class="filter-sep"></div>
-    <input class="filter-input" type="text" id="srch" placeholder="Search company, exec…" oninput="filter()">
+    <span class="filter-label">Period</span>
+    <div class="pills" id="date-pills">
+      <button class="pill on" data-days="0">All</button>
+      <button class="pill" data-days="7">7d</button>
+      <button class="pill" data-days="14">14d</button>
+      <button class="pill" data-days="30">30d</button>
+    </div>
+    <div class="filter-sep"></div>
+    <input class="filter-input" type="text" id="srch" placeholder="Search… (press /)" oninput="filter()">
     <button class="btn-export" onclick="exportCSV()">↓ CSV</button>
     <button class="btn-noise" id="noise-btn" onclick="toggleNoise()">Hide noise</button>
     <span class="row-count" id="rc">— rows</span>
@@ -941,13 +967,13 @@
       <table>
         <thead>
           <tr>
-            <th>Filed</th>
-            <th>Company</th>
-            <th>Executive</th>
-            <th>Type</th>
-            <th>Eff. Date</th>
+            <th class="th-sort sort-desc" data-col="filed_date">Filed</th>
+            <th class="th-sort" data-col="company">Company</th>
+            <th class="th-sort" data-col="executive_name">Executive</th>
+            <th class="th-sort" data-col="movement_type">Type</th>
+            <th class="th-sort" data-col="effective_date">Eff. Date</th>
             <th>Context</th>
-            <th>Signal</th>
+            <th class="th-sort" data-col="signal">Signal</th>
             <th>Source</th>
           </tr>
         </thead>
@@ -987,6 +1013,9 @@ let _filtered  = [];
 let hideNoise  = false;
 let filterType   = '';
 let filterSignal = '';
+let filterDays   = 0;
+let sortCol      = 'filed_date';
+let sortDir      = -1; // -1 = desc (newest first)
 
 // ── Load ──────────────────────────────────────────────────────────────────
 async function loadData() {
@@ -1046,6 +1075,38 @@ const TYPE_COLOR = {
   transition:  '#4f8ef7',
 };
 const SIG_ORDER = { high: 0, medium: 1, low: 2, none: 3 };
+const SIG_RANK  = { high: 3, medium: 2, low: 1, none: 0 };
+
+function sortData(data) {
+  return [...data].sort((a, b) => {
+    let av = a[sortCol] ?? '';
+    let bv = b[sortCol] ?? '';
+    if (sortCol === 'signal') {
+      av = SIG_RANK[av] ?? 0;
+      bv = SIG_RANK[bv] ?? 0;
+    }
+    if (av < bv) return  sortDir;
+    if (av > bv) return -sortDir;
+    return 0;
+  });
+}
+
+function updateSortHeaders() {
+  document.querySelectorAll('thead th.th-sort').forEach(th => {
+    th.classList.remove('sort-asc', 'sort-desc');
+    if (th.dataset.col === sortCol) {
+      th.classList.add(sortDir === 1 ? 'sort-asc' : 'sort-desc');
+    }
+  });
+}
+
+function filterByDays(m) {
+  if (!filterDays) return true;
+  if (!m.filed_date) return true;
+  const d = new Date(m.filed_date + 'T00:00:00Z');
+  const cutoff = new Date(Date.now() - filterDays * 86400000);
+  return d >= cutoff;
+}
 
 function renderHeroCards() {
   const container = document.getElementById('hero-cards');
@@ -1138,6 +1199,10 @@ function render(data) {
       '</td>' +
       '<td>' + sig(m.signal) + '</td>' +
       '<td><a href="' + esc(m.source_url) + '" target="_blank" rel="noopener" class="src-link">SEC 8-K &rarr;</a></td>';
+    tr.addEventListener('click', e => {
+      if (e.target.closest('a')) return;
+      tr.classList.toggle('row-expanded');
+    });
     tbody.appendChild(tr);
   });
   document.getElementById('rc').textContent = data.length + ' row' + (data.length !== 1 ? 's' : '');
@@ -1156,12 +1221,13 @@ function filter() {
   const s = document.getElementById('srch').value.toLowerCase();
   const out = DATA.filter(m => {
     if (hideNoise && m.movement_type === 'noise') return false;
-    const ms  = !s            || [m.company, m.executive_name, m.role].some(v => v && v.toLowerCase().includes(s));
+    const ms  = !s            || [m.company, m.executive_name, m.role, m.reason].some(v => v && v.toLowerCase().includes(s));
     const mt  = !filterType   || m.movement_type === filterType;
     const msi = !filterSignal || m.signal === filterSignal;
-    return ms && mt && msi;
+    const md  = filterByDays(m);
+    return ms && mt && msi && md;
   });
-  render(out);
+  render(sortData(out));
 }
 
 // ── Pill listeners ────────────────────────────────────────────────────────
@@ -1180,6 +1246,30 @@ document.getElementById('sig-pills').addEventListener('click', e => {
   filterSignal = pill.dataset.sig;
   document.querySelectorAll('#sig-pills .pill').forEach(p => p.classList.remove('on'));
   pill.classList.add('on');
+  filter();
+});
+
+// ── Date range filter ─────────────────────────────────────────────────────
+document.getElementById('date-pills').addEventListener('click', e => {
+  const pill = e.target.closest('.pill[data-days]');
+  if (!pill) return;
+  filterDays = parseInt(pill.dataset.days, 10);
+  document.querySelectorAll('#date-pills .pill').forEach(p => p.classList.remove('on'));
+  pill.classList.add('on');
+  filter();
+});
+
+// ── Column sort ───────────────────────────────────────────────────────────
+document.querySelector('thead tr').addEventListener('click', e => {
+  const th = e.target.closest('th[data-col]');
+  if (!th) return;
+  if (sortCol === th.dataset.col) {
+    sortDir = -sortDir;
+  } else {
+    sortCol = th.dataset.col;
+    sortDir = -1;
+  }
+  updateSortHeaders();
   filter();
 });
 
@@ -1206,6 +1296,17 @@ function exportCSV() {
 window.addEventListener('scroll', () => {
   document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 80);
 }, { passive: true });
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
+    e.preventDefault();
+    document.getElementById('srch').focus();
+  }
+  if (e.key === 'Escape' && document.activeElement.tagName === 'INPUT') {
+    document.activeElement.blur();
+  }
+});
 
 // ── Init ──────────────────────────────────────────────────────────────────
 loadData();

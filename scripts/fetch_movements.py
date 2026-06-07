@@ -406,7 +406,7 @@ def load_existing() -> dict:
     return {"updated_at": "", "total_filings_checked": 0, "movements": []}
 
 
-def drop_old(movements: list[dict], days: int = 30) -> list[dict]:
+def drop_old(movements: list[dict], days: int = 60) -> list[dict]:
     cutoff = datetime.now(timezone.utc) - timedelta(days=days)
     out = []
     for m in movements:
