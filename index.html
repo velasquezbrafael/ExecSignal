@@ -1085,8 +1085,8 @@ function sortData(data) {
       av = SIG_RANK[av] ?? 0;
       bv = SIG_RANK[bv] ?? 0;
     }
-    if (av < bv) return  sortDir;
-    if (av > bv) return -sortDir;
+    if (av < bv) return -sortDir;
+    if (av > bv) return  sortDir;
     return 0;
   });
 }
