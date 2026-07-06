@@ -944,64 +944,6 @@
   </div>
 </section>
 
-<!-- ── HOW IT WORKS ── -->
-<section class="hiw">
-  <div class="hiw-step">
-    <div class="hiw-num">01 — INGEST</div>
-    <div class="hiw-title">SEC EDGAR monitors every 8-K</div>
-    <div class="hiw-desc">Every public company must file an 8-K within four business days of a senior executive departure, appointment, or role change. ExecSignal polls Item 5.02 automatically.</div>
-    <span class="hiw-tag">efts.sec.gov · Item 5.02</span>
-  </div>
-  <div class="hiw-step">
-    <div class="hiw-num">02 — PARSE</div>
-    <div class="hiw-title">Claude Haiku extracts structured data</div>
-    <div class="hiw-desc">Raw filing text is run through Claude Haiku to extract executive name, role, movement type, effective date, reason, and successor — with a confidence score on every record.</div>
-    <span class="hiw-tag">Claude Haiku · confidence ≥ 0.70</span>
-  </div>
-  <div class="hiw-step">
-    <div class="hiw-num">03 — SURFACE</div>
-    <div class="hiw-title">Recruiters get first-mover signal</div>
-    <div class="hiw-desc">Movements are scored by signal strength — departures and interim appointments rank highest. Recruiters see the feed before the news cycle picks it up.</div>
-    <span class="hiw-tag">Daily refresh · CSV export</span>
-  </div>
-</section>
-
-<!-- ── BENTO STATS ── -->
-<section class="bento">
-  <div class="bento-grid">
-    <div class="bento-tile span2">
-      <div class="bento-num c-blue" id="st-total">—</div>
-      <div class="bento-lbl">Movements tracked</div>
-      <div class="bento-sub">Last 30 days</div>
-    </div>
-    <div class="bento-tile">
-      <div class="bento-num c-red" id="st-high">—</div>
-      <div class="bento-lbl">High signal</div>
-      <div class="bento-sub">Departures &amp; interims</div>
-    </div>
-    <div class="bento-tile">
-      <div class="bento-num c-amb" id="st-medium">—</div>
-      <div class="bento-lbl">Medium signal</div>
-      <div class="bento-sub">Retirements</div>
-    </div>
-    <div class="bento-tile span2">
-      <div class="bento-num c-grn" id="st-appt">—</div>
-      <div class="bento-lbl">Appointments</div>
-      <div class="bento-sub">New hires &amp; transitions</div>
-    </div>
-    <div class="bento-tile">
-      <div class="bento-num c-dim" id="st-cos">—</div>
-      <div class="bento-lbl">Companies tracked</div>
-      <div class="bento-sub">Unique public filers</div>
-    </div>
-    <div class="bento-tile">
-      <div class="bento-num c-dim" style="font-size:28px;letter-spacing:-1px;line-height:1.2;margin-bottom:12px;font-family:'JetBrains Mono',monospace;">SEC<br>EDGAR</div>
-      <div class="bento-lbl">Primary data source</div>
-      <div class="bento-sub">Legally required disclosures</div>
-    </div>
-  </div>
-</section>
-
 <!-- ── MOVEMENT FEED ── -->
 <section class="feed" id="feed">
   <div class="feed-header">
@@ -1085,6 +1027,64 @@
         <tbody id="tbody"></tbody>
       </table>
     </div>
+  </div>
+</section>
+
+<!-- ── BENTO STATS ── -->
+<section class="bento">
+  <div class="bento-grid">
+    <div class="bento-tile span2">
+      <div class="bento-num c-blue" id="st-total">—</div>
+      <div class="bento-lbl">Movements tracked</div>
+      <div class="bento-sub">Last 30 days</div>
+    </div>
+    <div class="bento-tile">
+      <div class="bento-num c-red" id="st-high">—</div>
+      <div class="bento-lbl">High signal</div>
+      <div class="bento-sub">Departures &amp; interims</div>
+    </div>
+    <div class="bento-tile">
+      <div class="bento-num c-amb" id="st-medium">—</div>
+      <div class="bento-lbl">Medium signal</div>
+      <div class="bento-sub">Retirements</div>
+    </div>
+    <div class="bento-tile span2">
+      <div class="bento-num c-grn" id="st-appt">—</div>
+      <div class="bento-lbl">Appointments</div>
+      <div class="bento-sub">New hires &amp; transitions</div>
+    </div>
+    <div class="bento-tile">
+      <div class="bento-num c-dim" id="st-cos">—</div>
+      <div class="bento-lbl">Companies tracked</div>
+      <div class="bento-sub">Unique public filers</div>
+    </div>
+    <div class="bento-tile">
+      <div class="bento-num c-dim" style="font-size:28px;letter-spacing:-1px;line-height:1.2;margin-bottom:12px;font-family:'JetBrains Mono',monospace;">SEC<br>EDGAR</div>
+      <div class="bento-lbl">Primary data source</div>
+      <div class="bento-sub">Legally required disclosures</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="hiw">
+  <div class="hiw-step">
+    <div class="hiw-num">01 — INGEST</div>
+    <div class="hiw-title">SEC EDGAR monitors every 8-K</div>
+    <div class="hiw-desc">Every public company must file an 8-K within four business days of a senior executive departure, appointment, or role change. ExecSignal polls Item 5.02 automatically.</div>
+    <span class="hiw-tag">efts.sec.gov · Item 5.02</span>
+  </div>
+  <div class="hiw-step">
+    <div class="hiw-num">02 — PARSE</div>
+    <div class="hiw-title">Claude Haiku extracts structured data</div>
+    <div class="hiw-desc">Raw filing text is run through Claude Haiku to extract executive name, role, movement type, effective date, reason, and successor — with a confidence score on every record.</div>
+    <span class="hiw-tag">Claude Haiku · confidence ≥ 0.70</span>
+  </div>
+  <div class="hiw-step">
+    <div class="hiw-num">03 — SURFACE</div>
+    <div class="hiw-title">Recruiters get first-mover signal</div>
+    <div class="hiw-desc">Movements are scored by signal strength — departures and interim appointments rank highest. Recruiters see the feed before the news cycle picks it up.</div>
+    <span class="hiw-tag">Daily refresh · CSV export</span>
   </div>
 </section>
 
