@@ -1046,6 +1046,20 @@
     <span class="row-count" id="rc">— rows</span>
   </div>
 
+  <div class="filter-row" style="border-top:1px solid var(--border); padding-top:8px;">
+    <span class="filter-label">Industry</span>
+    <div class="pills" id="sector-pills">
+      <button class="pill on" data-sector="">All</button>
+      <button class="pill" data-sector="Technology & AI">Tech &amp; AI</button>
+      <button class="pill" data-sector="Healthcare & Life Sciences">Healthcare</button>
+      <button class="pill" data-sector="Financial Services">Fin. Services</button>
+      <button class="pill" data-sector="Energy & Utilities">Energy</button>
+      <button class="pill" data-sector="Industrial & Defense">Industrial</button>
+      <button class="pill" data-sector="Consumer & Hospitality">Consumer</button>
+      <button class="pill" data-sector="Real Estate & Construction">Real Estate</button>
+    </div>
+  </div>
+
   <div class="tbl-wrap">
     <div class="tbl-box">
       <table>
@@ -1097,6 +1111,7 @@ let _filtered  = [];
 let hideNoise  = false;
 let filterType   = '';
 let filterSignal = '';
+let filterSector = '';
 let filterDays   = 0;
 let sortCol      = 'filed_date';
 let sortDir      = -1; // -1 = desc (newest first)
@@ -1373,6 +1388,7 @@ function render(data) {
         '<div class="detail-meta">' +
           '<div class="detail-meta-item"><span class="detail-meta-key">Filed</span><span class="detail-meta-val">' + esc(m.filed_date || '—') + '</span></div>' +
           '<div class="detail-meta-item"><span class="detail-meta-key">Effective</span><span class="detail-meta-val">' + esc(m.effective_date || '—') + '</span></div>' +
+          (m.sector ? '<div class="detail-meta-item"><span class="detail-meta-key">Sector</span><span class="detail-meta-val">' + esc(m.sector) + '</span></div>' : '') +
           tickerHTML +
           confHTML +
           filingBtn +
@@ -1418,8 +1434,9 @@ function filter() {
     const ms  = !s            || [m.company, m.executive_name, m.role, m.reason].some(v => v && v.toLowerCase().includes(s));
     const mt  = !filterType   || m.movement_type === filterType;
     const msi = !filterSignal || m.signal === filterSignal;
+    const msc = !filterSector || m.sector === filterSector;
     const md  = filterByDays(m);
-    return ms && mt && msi && md;
+    return ms && mt && msi && msc && md;
   });
   render(sortData(out));
 }
@@ -1439,6 +1456,16 @@ document.getElementById('sig-pills').addEventListener('click', e => {
   if (!pill) return;
   filterSignal = pill.dataset.sig;
   document.querySelectorAll('#sig-pills .pill').forEach(p => p.classList.remove('on'));
+  pill.classList.add('on');
+  filter();
+});
+
+// ── Sector filter ─────────────────────────────────────────────────────────
+document.getElementById('sector-pills').addEventListener('click', e => {
+  const pill = e.target.closest('.pill[data-sector]');
+  if (!pill) return;
+  filterSector = pill.dataset.sector;
+  document.querySelectorAll('#sector-pills .pill').forEach(p => p.classList.remove('on'));
   pill.classList.add('on');
   filter();
 });

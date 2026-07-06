@@ -64,12 +64,14 @@ def pre_filter_section(section: str) -> bool:
     """Return True if section looks like a real executive movement (not noise).
 
     This runs BEFORE calling Haiku, saving API costs on proxy-season noise.
+    Requirement: at least 1 real signal, and real signals must not be
+    outnumbered by noise signals (allows summer filings with single clear verbs).
     """
     if len(section) < MIN_SECTION_LEN:
         return False
     real_count  = sum(1 for p in _REAL_SIGNALS  if re.search(p, section, re.I))
     noise_count = sum(1 for p in _NOISE_SIGNALS if re.search(p, section, re.I))
-    return real_count >= 2 and real_count > noise_count
+    return real_count >= 1 and real_count >= noise_count
 
 HEADERS = {
     "User-Agent": "ExecSignal research@execsignal.io",
@@ -289,6 +291,10 @@ Fields per event:
 - successor: successor name if mentioned or null
 - prior_company: prior company if mentioned (for appointments) or null
 - confidence: float 0.0-1.0
+- sector: classify the COMPANY (not the role) into exactly one of:
+  "Technology & AI"|"Healthcare & Life Sciences"|"Financial Services"|
+  "Energy & Utilities"|"Industrial & Defense"|"Consumer & Hospitality"|
+  "Real Estate & Construction"|"Other"
 
 Return ONLY a valid JSON array. Example: [{...}, {...}]
 If the entire section is noise, return: [{{"movement_type":"noise","confidence":0.95,...nulls}}]
@@ -477,6 +483,7 @@ def main():
                 "prior_company": event.get("prior_company"),
                 "confidence": event.get("confidence", 0),
                 "signal": "none",
+                "sector": event.get("sector", "Other"),
                 "source_url": metadata["source_url"],
             }
 

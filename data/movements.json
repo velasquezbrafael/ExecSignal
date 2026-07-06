@@ -16,7 +16,8 @@
       "company": "BeyondSpring Inc.",
       "ticker": "BYSI",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1677940/000117184326003908/bysi20260604_8k.htm",
-      "id": "mov_001"
+      "id": "mov_001",
+      "sector": "Healthcare & Life Sciences"
     },
     {
       "executive_name": "Rejji P. Hayes",
@@ -32,7 +33,8 @@
       "company": "CMS Energy Corp.",
       "ticker": "CMS",
       "source_url": "https://www.sec.gov/Archives/edgar/data/811156/000110465926070037/tm2616645d1_8k.htm",
-      "id": "mov_002"
+      "id": "mov_002",
+      "sector": "Energy & Utilities"
     },
     {
       "executive_name": "Jillian Evanko",
@@ -48,7 +50,8 @@
       "company": "Honeywell International Inc.",
       "ticker": "HON",
       "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384026000068/hon-20260601.htm",
-      "id": "mov_003"
+      "id": "mov_003",
+      "sector": "Industrial & Defense"
     },
     {
       "executive_name": "Todd Heeter",
@@ -64,7 +67,8 @@
       "company": "Hub Group, Inc.",
       "ticker": "HUBG",
       "source_url": "https://www.sec.gov/Archives/edgar/data/940942/000119312526253759/d78400d8k.htm",
-      "id": "mov_004"
+      "id": "mov_004",
+      "sector": "Industrial & Defense"
     },
     {
       "executive_name": "Kevin Beth",
@@ -80,7 +84,8 @@
       "company": "Hub Group, Inc.",
       "ticker": "HUBG",
       "source_url": "https://www.sec.gov/Archives/edgar/data/940942/000119312526253759/d221636d8k.htm",
-      "id": "mov_005"
+      "id": "mov_005",
+      "sector": "Industrial & Defense"
     },
     {
       "executive_name": "Amro Albanna",
@@ -96,7 +101,8 @@
       "company": "Aditxt, Inc.",
       "ticker": "ADTX",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1726711/000121390026063165/ea0292902-8k_aditxt.htm",
-      "id": "mov_006"
+      "id": "mov_006",
+      "sector": "Healthcare & Life Sciences"
     },
     {
       "executive_name": "Silvio Napoli",
@@ -112,7 +118,8 @@
       "company": "Lucid Group, Inc.",
       "ticker": "LCID",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1811210/000162828026039266/lcid-20260530.htm",
-      "id": "mov_007"
+      "id": "mov_007",
+      "sector": "Technology & AI"
     },
     {
       "executive_name": "Michael G. Combs",
@@ -128,7 +135,8 @@
       "company": "CorVel Corp.",
       "ticker": "CRVL",
       "source_url": "https://www.sec.gov/Archives/edgar/data/874866/000119312526251709/d24231d8k.htm",
-      "id": "mov_008"
+      "id": "mov_008",
+      "sector": "Healthcare & Life Sciences"
     },
     {
       "executive_name": "Nate Olmstead",
@@ -144,7 +152,8 @@
       "company": "Penguin Solutions, Inc.",
       "ticker": "PENG",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1616533/000119312526251467/d104493d8k.htm",
-      "id": "mov_009"
+      "id": "mov_009",
+      "sector": "Technology & AI"
     },
     {
       "executive_name": "Jeffrey D. Turner",
@@ -160,7 +169,8 @@
       "company": "Groovy Company, Inc.",
       "ticker": "GROO",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1499275/000149927526000014/groo-20250813_8ka.htm",
-      "id": "mov_010"
+      "id": "mov_010",
+      "sector": "Technology & AI"
     },
     {
       "executive_name": "David Moon",
@@ -176,7 +186,8 @@
       "company": "Energy Recovery, Inc.",
       "ticker": "ERII",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1421517/000142151726000050/erii-20260528.htm",
-      "id": "mov_011"
+      "id": "mov_011",
+      "sector": "Energy & Utilities"
     },
     {
       "executive_name": "Steve M. Smith",
@@ -192,7 +203,8 @@
       "company": "Core Scientific, Inc.",
       "ticker": "CORZ",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1839341/000183934126000005/core-20260526.htm",
-      "id": "mov_012"
+      "id": "mov_012",
+      "sector": "Technology & AI"
     },
     {
       "executive_name": "Christine Pellizzari",
@@ -208,7 +220,8 @@
       "company": "Tempest Therapeutics, Inc.",
       "ticker": "TPST",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1544227/000119312526237150/d29824d8k.htm",
-      "id": "mov_013"
+      "id": "mov_013",
+      "sector": "Healthcare & Life Sciences"
     },
     {
       "executive_name": "Paul D. Ballew",
@@ -224,7 +237,8 @@
       "company": "Hyatt Hotels Corp",
       "ticker": "H",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1468174/000110465926065756/tm2615108d2_8k.htm",
-      "id": "mov_014"
+      "id": "mov_014",
+      "sector": "Consumer & Hospitality"
     },
     {
       "executive_name": "David R. Wells",
@@ -240,7 +254,8 @@
       "company": "Functional Brands Inc.",
       "ticker": "MEHA",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1837254/000121390026060362/ea0291927-8ka1_functional.htm",
-      "id": "mov_015"
+      "id": "mov_015",
+      "sector": "Consumer & Hospitality"
     },
     {
       "executive_name": "Michelle Burke",
@@ -256,7 +271,8 @@
       "company": "Z Squared Inc.",
       "ticker": "ZSQR",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1759186/000168316826004273/zsquared_8k.htm",
-      "id": "mov_016"
+      "id": "mov_016",
+      "sector": "Technology & AI"
     },
     {
       "executive_name": "Louise M. Parent",
@@ -272,7 +288,8 @@
       "company": "Zoetis Inc.",
       "ticker": "ZTS",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1555280/000155528026000029/zts-20260520.htm",
-      "id": "mov_017"
+      "id": "mov_017",
+      "sector": "Healthcare & Life Sciences"
     },
     {
       "executive_name": "Glenn Wright",
@@ -288,7 +305,8 @@
       "company": "NRG Energy, Inc.",
       "ticker": "NRG",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1013871/000110465926064884/tm2615243d1_8k.htm",
-      "id": "mov_018"
+      "id": "mov_018",
+      "sector": "Energy & Utilities"
     },
     {
       "executive_name": "C. Taylor Pickett",
@@ -304,7 +322,8 @@
       "company": "Omega Healthcare Investors, Inc.",
       "ticker": "OHI",
       "source_url": "https://www.sec.gov/Archives/edgar/data/888491/000110465926065158/tm2615007d1_8k.htm",
-      "id": "mov_019"
+      "id": "mov_019",
+      "sector": "Financial Services"
     },
     {
       "executive_name": "Matthew P. Gourmand",
@@ -320,7 +339,8 @@
       "company": "Omega Healthcare Investors, Inc.",
       "ticker": "OHI",
       "source_url": "https://www.sec.gov/Archives/edgar/data/888491/000110465926065158/tm2615007d1_8k.htm",
-      "id": "mov_020"
+      "id": "mov_020",
+      "sector": "Financial Services"
     },
     {
       "executive_name": "Travis D. Stice",
@@ -336,7 +356,8 @@
       "company": "Diamondback Energy, Inc.",
       "ticker": "FANG",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000090/fang-20260520.htm",
-      "id": "mov_021"
+      "id": "mov_021",
+      "sector": "Energy & Utilities"
     },
     {
       "executive_name": "Anson Neo",
@@ -352,7 +373,8 @@
       "company": "NUSATRIP Inc",
       "ticker": "NUTR",
       "source_url": "https://www.sec.gov/Archives/edgar/data/2006468/000149315226024614/form8-k.htm",
-      "id": "mov_022"
+      "id": "mov_022",
+      "sector": "Other"
     },
     {
       "executive_name": "Darko Horvat",
@@ -368,7 +390,8 @@
       "company": "Global AI, Inc.",
       "ticker": "GLAI",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1473490/000149315226024455/form8-k.htm",
-      "id": "mov_023"
+      "id": "mov_023",
+      "sector": "Technology & AI"
     },
     {
       "executive_name": "Berj Abajian",
@@ -384,7 +407,8 @@
       "company": "Groovy Company, Inc.",
       "ticker": "GROO",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1499275/000149927526000007/groo-20250813_8k.htm",
-      "id": "mov_024"
+      "id": "mov_024",
+      "sector": "Technology & AI"
     },
     {
       "executive_name": "Robert Parahus",
@@ -400,7 +424,8 @@
       "company": "Toll Brothers, Inc.",
       "ticker": "TOL",
       "source_url": "https://www.sec.gov/Archives/edgar/data/794170/000079417026000079/tol-20260512.htm",
-      "id": "mov_025"
+      "id": "mov_025",
+      "sector": "Real Estate & Construction"
     },
     {
       "executive_name": "Mitchell Steenrod",
@@ -416,7 +441,8 @@
       "company": "CarMax, Inc.",
       "ticker": "KMX",
       "source_url": "https://www.sec.gov/Archives/edgar/data/1170010/000117001026000048/kmx-20260512.htm",
-      "id": "mov_026"
+      "id": "mov_026",
+      "sector": "Consumer & Hospitality"
     }
   ]
 }
