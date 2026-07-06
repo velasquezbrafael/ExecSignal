@@ -719,15 +719,99 @@
     thead th.sort-desc::after { content: ' ↓'; opacity: 1; color: var(--accent); }
 
     /* ── ROW EXPAND ── */
-    tbody tr { cursor: pointer; }
-    tbody tr.row-expanded,
-    tbody tr.row-expanded:hover { background: rgba(79,142,247,0.06); }
-    tbody tr.row-expanded .ctx-text {
-      -webkit-line-clamp: unset;
-      display: block;
-      overflow: visible;
-      max-width: 380px;
+    tbody tr.data-row { cursor: pointer; }
+    tbody tr.data-row.row-open,
+    tbody tr.data-row.row-open:hover { background: rgba(79,142,247,0.05); }
+    tbody tr.data-row.row-open td:first-child { border-left: 2px solid var(--accent); }
+
+    /* ── DETAIL PANEL ── */
+    .detail-tr { display: none; }
+    .detail-tr.open { display: table-row; }
+    .detail-tr td { padding: 0; border-bottom: 1px solid var(--border); }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
+    .detail-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #090d16;
+      border-left: 2px solid var(--accent);
+      animation: slideDown 0.15s ease;
+    }
+    .detail-header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 20px 11px;
+      border-bottom: 1px solid var(--border);
+    }
+    .detail-company-name { font-weight: 600; font-size: 13.5px; color: var(--text-p); }
+    .detail-exec-name    { font-size: 12.5px; color: var(--text-s); }
+    .detail-sep          { color: var(--text-d); font-size: 12px; }
+    .detail-section {
+      padding: 14px 20px;
+      border-right: 1px solid var(--border);
+    }
+    .detail-section:last-of-type { border-right: none; }
+    .detail-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--text-d);
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      margin-bottom: 7px;
+    }
+    .detail-text {
+      font-size: 12.5px;
+      color: var(--text-p);
+      line-height: 1.65;
+    }
+    .detail-why {
+      font-size: 12.5px;
+      color: #7ab3ff;
+      line-height: 1.65;
+    }
+    .detail-meta {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 18px;
+      padding: 9px 20px;
+      border-top: 1px solid var(--border);
+      background: rgba(0,0,0,0.25);
+    }
+    .detail-meta-item {
+      display: flex;
+      gap: 5px;
+      font-size: 10.5px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .detail-meta-key { color: var(--text-d); }
+    .detail-meta-val { color: var(--text-s); }
+    .conf-bar { display: flex; align-items: center; gap: 6px; }
+    .conf-track { width: 52px; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; }
+    .conf-fill  { height: 100%; border-radius: 2px; background: var(--accent); }
+    .detail-filing-btn {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      background: var(--accent-10);
+      border: 1px solid var(--accent-20);
+      border-radius: 4px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 500;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .detail-filing-btn:hover { background: var(--accent-20); }
 
     /* ── FOOTER ── */
     .footer {
@@ -1165,6 +1249,60 @@ function sig(s) {
   return '<div class="sig sig-' + lvl + '"><div class="sig-pip"></div>' + (SLABEL[lvl] || lvl) + '</div>';
 }
 
+// ── Detail panel helpers ───────────────────────────────────────────────────
+function buildSummary(m) {
+  const name    = m.executive_name || 'An executive';
+  const role    = m.role || 'executive';
+  const company = m.company || 'the company';
+  const verbs   = {
+    departure:   'departed from',
+    appointment: 'was appointed to',
+    retirement:  'retired from',
+    interim:     'was named interim at',
+    promotion:   'was promoted at',
+    transition:  'transitioned at',
+    noise:       'was mentioned at',
+  };
+  const verb = verbs[m.movement_type] || 'moved at';
+  const when = m.effective_date && m.effective_date !== m.filed_date
+    ? ` (effective ${m.effective_date})` : '';
+  let text = `${name} ${verb} ${company} as ${role}${when}.`;
+  if (m.successor) text += ` Succeeded by ${m.successor}.`;
+  if (m.prior_company) text += ` Previously at ${m.prior_company}.`;
+  if (m.reason && m.reason.length > 30) {
+    const r = m.reason.trim();
+    if (!text.toLowerCase().includes(r.substring(0, 20).toLowerCase())) {
+      text += ' ' + r;
+    }
+  }
+  return text;
+}
+
+function buildWhyMatters(m) {
+  const role    = m.role || 'executive';
+  const company = m.company || 'this company';
+  const daysSince = m.filed_date
+    ? Math.floor((Date.now() - new Date(m.filed_date + 'T00:00:00Z')) / 86400000)
+    : null;
+  const recency = daysSince === null ? '' :
+    daysSince === 0 ? 'Filed today — maximum first-mover advantage.' :
+    daysSince <= 3  ? `Filed ${daysSince}d ago — still very early.` :
+    daysSince <= 7  ? `Filed ${daysSince}d ago — within the first-week window.` :
+    daysSince <= 14 ? `Filed ${daysSince}d ago — time-sensitive.` :
+                      `Filed ${daysSince}d ago — verify search status before outreach.`;
+
+  const insights = {
+    departure:   `A ${role} vacancy at ${company} nearly always triggers an executive search mandate — either to backfill this role directly or to restructure the leadership team. Early contact with the board or CHRO positions you before a retained search is awarded. ${recency}`,
+    appointment: `An incoming ${role} often signals upstream opportunity: their prior seat may be vacant, and new leaders tend to bring in trusted external talent within 90 days. ${m.prior_company ? `Worth scanning the leadership structure at ${m.prior_company} as well.` : ''} ${recency}`,
+    retirement:  `Retirement-driven exits create a predictable, planned search window. ${company} likely has a succession timeline — an early conversation can position your firm as the preferred search partner before a mandate is formally issued. ${recency}`,
+    interim:     `An interim appointment is the clearest possible search signal — ${company} needs a permanent ${role} and the search is effectively live. This is a time-sensitive, high-probability opportunity. ${recency}`,
+    promotion:   `An internal promotion may leave a vacancy in the promoted executive's prior role. New seat-holders also frequently hire externally within the first quarter. ${recency}`,
+    transition:  `Confirm whether this is a structured succession or an unplanned exit — each carries materially different search implications and urgency. ${recency}`,
+    noise:       `Low-confidence extraction (AI score below threshold). Review the source filing directly before drawing any conclusions or taking action.`,
+  };
+  return insights[m.movement_type] || `This movement at ${company} warrants follow-up to assess search potential. ${recency}`;
+}
+
 // ── Render ────────────────────────────────────────────────────────────────
 function render(data) {
   _filtered = data;
@@ -1176,7 +1314,9 @@ function render(data) {
     return;
   }
   data.forEach(m => {
+    // ── Main row ──
     const tr = document.createElement('tr');
+    tr.className = 'data-row';
     const successorLine = m.successor
       ? '<div class="ctx-sub">Successor: ' + esc(m.successor) + '</div>' : '';
     const priorLine = m.prior_company
@@ -1199,11 +1339,65 @@ function render(data) {
       '</td>' +
       '<td>' + sig(m.signal) + '</td>' +
       '<td><a href="' + esc(m.source_url) + '" target="_blank" rel="noopener" class="src-link">SEC 8-K &rarr;</a></td>';
+
+    // ── Detail row ──
+    const dtr = document.createElement('tr');
+    dtr.className = 'detail-tr';
+    const confPct = m.confidence ? Math.round(m.confidence * 100) : null;
+    const tickerHTML = m.ticker
+      ? '<div class="detail-meta-item"><span class="detail-meta-key">Ticker</span><span class="detail-meta-val">' + esc(m.ticker) + '</span></div>'
+      : '';
+    const confHTML = confPct !== null
+      ? '<div class="detail-meta-item"><span class="detail-meta-key">AI Confidence</span><span class="detail-meta-val conf-bar"><span class="conf-track"><span class="conf-fill" style="width:' + confPct + '%"></span></span>' + confPct + '%</span></div>'
+      : '';
+    const filingBtn = m.source_url
+      ? '<a href="' + esc(m.source_url) + '" target="_blank" rel="noopener" class="detail-filing-btn">View SEC 8-K Filing ↗</a>'
+      : '';
+    dtr.innerHTML =
+      '<td colspan="8"><div class="detail-panel">' +
+        '<div class="detail-header">' +
+          badge(m.movement_type) +
+          '<span class="detail-company-name">' + esc(m.company || '—') + '</span>' +
+          (m.ticker ? '<span class="detail-sep">·</span><span class="detail-meta-val" style="font-family:\'JetBrains Mono\',monospace;font-size:11px">' + esc(m.ticker) + '</span>' : '') +
+          '<span class="detail-sep">—</span>' +
+          '<span class="detail-exec-name">' + esc(m.executive_name || '—') + ', ' + esc(titleCase(m.role || '')) + '</span>' +
+        '</div>' +
+        '<div class="detail-section">' +
+          '<div class="detail-label">Summary</div>' +
+          '<div class="detail-text">' + esc(buildSummary(m)) + '</div>' +
+        '</div>' +
+        '<div class="detail-section">' +
+          '<div class="detail-label">Why It Matters for Search</div>' +
+          '<div class="detail-why">' + esc(buildWhyMatters(m)) + '</div>' +
+        '</div>' +
+        '<div class="detail-meta">' +
+          '<div class="detail-meta-item"><span class="detail-meta-key">Filed</span><span class="detail-meta-val">' + esc(m.filed_date || '—') + '</span></div>' +
+          '<div class="detail-meta-item"><span class="detail-meta-key">Effective</span><span class="detail-meta-val">' + esc(m.effective_date || '—') + '</span></div>' +
+          tickerHTML +
+          confHTML +
+          filingBtn +
+        '</div>' +
+      '</div></td>';
+
+    // ── Toggle on row click ──
     tr.addEventListener('click', e => {
       if (e.target.closest('a')) return;
-      tr.classList.toggle('row-expanded');
+      const isOpen = dtr.classList.contains('open');
+      // Close any other open panels
+      document.querySelectorAll('.detail-tr.open').forEach(d => {
+        d.classList.remove('open');
+        d.previousElementSibling?.classList.remove('row-open');
+      });
+      if (!isOpen) {
+        dtr.classList.add('open');
+        tr.classList.add('row-open');
+      } else {
+        tr.classList.remove('row-open');
+      }
     });
+
     tbody.appendChild(tr);
+    tbody.appendChild(dtr);
   });
   document.getElementById('rc').textContent = data.length + ' row' + (data.length !== 1 ? 's' : '');
 }
