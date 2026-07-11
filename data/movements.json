@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-10T15:26:07.612753+00:00",
-  "total_filings_checked": 13480,
+  "updated_at": "2026-07-11T14:16:21.050965+00:00",
+  "total_filings_checked": 13580,
   "movements": [
     {
       "executive_name": "Lan Huang",
@@ -426,23 +426,6 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/794170/000079417026000079/tol-20260512.htm",
       "id": "mov_025",
       "sector": "Real Estate & Construction"
-    },
-    {
-      "executive_name": "Mitchell Steenrod",
-      "role": "Chief Financial Officer",
-      "movement_type": "retirement",
-      "effective_date": null,
-      "reason": "planned retirement - will not stand for re-election",
-      "successor": null,
-      "prior_company": null,
-      "signal": "medium",
-      "confidence": 0.82,
-      "filed_date": "2026-05-12",
-      "company": "CarMax, Inc.",
-      "ticker": "KMX",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1170010/000117001026000048/kmx-20260512.htm",
-      "id": "mov_026",
-      "sector": "Consumer & Hospitality"
     }
   ]
 }
