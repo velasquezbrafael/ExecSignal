@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-11T14:16:21.050965+00:00",
-  "total_filings_checked": 13580,
+  "updated_at": "2026-07-12T14:21:06.606296+00:00",
+  "total_filings_checked": 13680,
   "movements": [
     {
       "executive_name": "Lan Huang",
@@ -392,40 +392,6 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/1473490/000149315226024455/form8-k.htm",
       "id": "mov_023",
       "sector": "Technology & AI"
-    },
-    {
-      "executive_name": "Berj Abajian",
-      "role": "Chief Executive Officer",
-      "movement_type": "interim",
-      "effective_date": "2026-05-01",
-      "reason": "his departure from the officer role",
-      "successor": null,
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-05-13",
-      "company": "Groovy Company, Inc.",
-      "ticker": "GROO",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1499275/000149927526000007/groo-20250813_8k.htm",
-      "id": "mov_024",
-      "sector": "Technology & AI"
-    },
-    {
-      "executive_name": "Robert Parahus",
-      "role": "President and Chief Operating Officer",
-      "movement_type": "retirement",
-      "effective_date": "2026-06-30",
-      "reason": "Robert Parahus retiring from President and Chief Operating Officer. Seth J. Ring to succeed.",
-      "successor": "Seth J. Ring",
-      "prior_company": null,
-      "signal": "low",
-      "confidence": 0.82,
-      "filed_date": "2026-05-13",
-      "company": "Toll Brothers, Inc.",
-      "ticker": "TOL",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/794170/000079417026000079/tol-20260512.htm",
-      "id": "mov_025",
-      "sector": "Real Estate & Construction"
     }
   ]
 }
