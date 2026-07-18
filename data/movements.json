@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-17T14:23:37.448955+00:00",
-  "total_filings_checked": 13880,
+  "updated_at": "2026-07-18T14:13:17.468463+00:00",
+  "total_filings_checked": 13980,
   "movements": [
     {
       "executive_name": "Lan Huang",
@@ -375,23 +375,6 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/2006468/000149315226024614/form8-k.htm",
       "id": "mov_022",
       "sector": "Other"
-    },
-    {
-      "executive_name": "Darko Horvat",
-      "role": "Chief Executive Officer",
-      "movement_type": "appointment",
-      "effective_date": "2025-09-01",
-      "reason": "Darko Horvat appointed as Chief Executive Officer.",
-      "successor": null,
-      "prior_company": null,
-      "signal": "low",
-      "confidence": 0.82,
-      "filed_date": "2026-05-19",
-      "company": "Global AI, Inc.",
-      "ticker": "GLAI",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1473490/000149315226024455/form8-k.htm",
-      "id": "mov_023",
-      "sector": "Technology & AI"
     }
   ]
 }
