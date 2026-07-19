@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-18T14:13:17.468463+00:00",
-  "total_filings_checked": 13980,
+  "updated_at": "2026-07-19T14:18:03.248544+00:00",
+  "total_filings_checked": 14080,
   "movements": [
     {
       "executive_name": "Lan Huang",
@@ -341,40 +341,6 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/888491/000110465926065158/tm2615007d1_8k.htm",
       "id": "mov_020",
       "sector": "Financial Services"
-    },
-    {
-      "executive_name": "Travis D. Stice",
-      "role": "Executive Chairman of the Board",
-      "movement_type": "transition",
-      "effective_date": "2025-02-20",
-      "reason": "Travis D. Stice transitioning to new role at Diamondback Energy, Inc..",
-      "successor": null,
-      "prior_company": null,
-      "signal": "medium",
-      "confidence": 0.82,
-      "filed_date": "2026-05-20",
-      "company": "Diamondback Energy, Inc.",
-      "ticker": "FANG",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1539838/000153983826000090/fang-20260520.htm",
-      "id": "mov_021",
-      "sector": "Energy & Utilities"
-    },
-    {
-      "executive_name": "Anson Neo",
-      "role": "Chief Executive Officer",
-      "movement_type": "departure",
-      "effective_date": "2026-05-17",
-      "reason": "Anson Neo departed as Chief Executive Officer from NUSATRIP Inc.",
-      "successor": null,
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-05-20",
-      "company": "NUSATRIP Inc",
-      "ticker": "NUTR",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/2006468/000149315226024614/form8-k.htm",
-      "id": "mov_022",
-      "sector": "Other"
     }
   ]
 }
