@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-19T14:18:03.248544+00:00",
-  "total_filings_checked": 14080,
+  "updated_at": "2026-07-20T15:01:13.981177+00:00",
+  "total_filings_checked": 14180,
   "movements": [
     {
       "executive_name": "Lan Huang",
@@ -290,57 +290,6 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/1555280/000155528026000029/zts-20260520.htm",
       "id": "mov_017",
       "sector": "Healthcare & Life Sciences"
-    },
-    {
-      "executive_name": "Glenn Wright",
-      "role": "Chief Executive Officer",
-      "movement_type": "departure",
-      "effective_date": "2026-05-21",
-      "reason": "Glenn Wright departed as Chief Executive Officer from NRG Energy, Inc..",
-      "successor": null,
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-05-21",
-      "company": "NRG Energy, Inc.",
-      "ticker": "NRG",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1013871/000110465926064884/tm2615243d1_8k.htm",
-      "id": "mov_018",
-      "sector": "Energy & Utilities"
-    },
-    {
-      "executive_name": "C. Taylor Pickett",
-      "role": "Chief Executive Officer",
-      "movement_type": "retirement",
-      "effective_date": "2026-10-01",
-      "reason": "planned leadership succession",
-      "successor": "Matthew P. Gourmand",
-      "prior_company": null,
-      "signal": "low",
-      "confidence": 0.82,
-      "filed_date": "2026-05-21",
-      "company": "Omega Healthcare Investors, Inc.",
-      "ticker": "OHI",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/888491/000110465926065158/tm2615007d1_8k.htm",
-      "id": "mov_019",
-      "sector": "Financial Services"
-    },
-    {
-      "executive_name": "Matthew P. Gourmand",
-      "role": "Chief Executive Officer",
-      "movement_type": "appointment",
-      "effective_date": "2026-10-01",
-      "reason": "Matthew P. Gourmand appointed as Chief Executive Officer.",
-      "successor": null,
-      "prior_company": null,
-      "signal": "low",
-      "confidence": 0.82,
-      "filed_date": "2026-05-21",
-      "company": "Omega Healthcare Investors, Inc.",
-      "ticker": "OHI",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/888491/000110465926065158/tm2615007d1_8k.htm",
-      "id": "mov_020",
-      "sector": "Financial Services"
     }
   ]
 }
