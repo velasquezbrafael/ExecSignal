@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-24T14:31:23.100196+00:00",
-  "total_filings_checked": 14580,
+  "updated_at": "2026-07-25T14:24:58.203023+00:00",
+  "total_filings_checked": 14680,
   "movements": [
     {
       "executive_name": "Lan Huang",
@@ -188,23 +188,6 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/1421517/000142151726000050/erii-20260528.htm",
       "id": "mov_011",
       "sector": "Energy & Utilities"
-    },
-    {
-      "executive_name": "Steve M. Smith",
-      "role": "Chief Executive Officer",
-      "movement_type": "appointment",
-      "effective_date": "2026-05-26",
-      "reason": "appointed as Board member; was CEO of Zayo since 2020",
-      "successor": null,
-      "prior_company": "Zayo Group",
-      "signal": "low",
-      "confidence": 0.82,
-      "filed_date": "2026-05-26",
-      "company": "Core Scientific, Inc.",
-      "ticker": "CORZ",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1839341/000183934126000005/core-20260526.htm",
-      "id": "mov_012",
-      "sector": "Technology & AI"
     }
   ]
 }
