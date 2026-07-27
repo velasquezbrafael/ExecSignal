@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-26T14:21:35.173532+00:00",
-  "total_filings_checked": 14780,
+  "updated_at": "2026-07-27T15:35:06.457216+00:00",
+  "total_filings_checked": 14880,
   "movements": [
     {
       "executive_name": "Lan Huang",
@@ -154,40 +154,6 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/1616533/000119312526251467/d104493d8k.htm",
       "id": "mov_009",
       "sector": "Technology & AI"
-    },
-    {
-      "executive_name": "Jeffrey D. Turner",
-      "role": "Chief Legal Officer",
-      "movement_type": "departure",
-      "effective_date": "2026-05-01",
-      "reason": "his departure from the officer role",
-      "successor": null,
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-05-28",
-      "company": "Groovy Company, Inc.",
-      "ticker": "GROO",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1499275/000149927526000014/groo-20250813_8ka.htm",
-      "id": "mov_010",
-      "sector": "Technology & AI"
-    },
-    {
-      "executive_name": "David Moon",
-      "role": "Chief Executive Officer",
-      "movement_type": "interim",
-      "effective_date": "2026-05-25",
-      "reason": "David Moon appointed interim Chief Executive Officer pending permanent search.",
-      "successor": null,
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-05-28",
-      "company": "Energy Recovery, Inc.",
-      "ticker": "ERII",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1421517/000142151726000050/erii-20260528.htm",
-      "id": "mov_011",
-      "sector": "Energy & Utilities"
     }
   ]
 }
