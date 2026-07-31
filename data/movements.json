@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-30T14:58:42.814658+00:00",
-  "total_filings_checked": 15180,
+  "updated_at": "2026-07-31T15:12:58.811728+00:00",
+  "total_filings_checked": 15280,
   "movements": [
     {
       "executive_name": "Lan Huang",
@@ -86,74 +86,6 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/940942/000119312526253759/d221636d8k.htm",
       "id": "mov_005",
       "sector": "Industrial & Defense"
-    },
-    {
-      "executive_name": "Amro Albanna",
-      "role": "Chief Executive Officer",
-      "movement_type": "interim",
-      "effective_date": "2026-05-29",
-      "reason": "Amro Albanna appointed interim Chief Executive Officer pending permanent search.",
-      "successor": null,
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-06-01",
-      "company": "Aditxt, Inc.",
-      "ticker": "ADTX",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1726711/000121390026063165/ea0292902-8k_aditxt.htm",
-      "id": "mov_006",
-      "sector": "Healthcare & Life Sciences"
-    },
-    {
-      "executive_name": "Silvio Napoli",
-      "role": "Chief Executive Officer",
-      "movement_type": "departure",
-      "effective_date": "2026-06-01",
-      "reason": "Silvio Napoli departed as Chief Executive Officer from Lucid Group, Inc..",
-      "successor": null,
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-06-01",
-      "company": "Lucid Group, Inc.",
-      "ticker": "LCID",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1811210/000162828026039266/lcid-20260530.htm",
-      "id": "mov_007",
-      "sector": "Technology & AI"
-    },
-    {
-      "executive_name": "Michael G. Combs",
-      "role": "Chief Executive Officer and President",
-      "movement_type": "transition",
-      "effective_date": "2026-07-01",
-      "reason": "transitioning to Executive Chairman role",
-      "successor": null,
-      "prior_company": null,
-      "signal": "medium",
-      "confidence": 0.82,
-      "filed_date": "2026-06-01",
-      "company": "CorVel Corp.",
-      "ticker": "CRVL",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/874866/000119312526251709/d24231d8k.htm",
-      "id": "mov_008",
-      "sector": "Healthcare & Life Sciences"
-    },
-    {
-      "executive_name": "Nate Olmstead",
-      "role": "Chief Financial Officer",
-      "movement_type": "interim",
-      "effective_date": "2026-05-26",
-      "reason": "Nate Olmstead appointed interim Chief Financial Officer pending permanent search.",
-      "successor": null,
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-06-01",
-      "company": "Penguin Solutions, Inc.",
-      "ticker": "PENG",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1616533/000119312526251467/d104493d8k.htm",
-      "id": "mov_009",
-      "sector": "Technology & AI"
     }
   ]
 }
