@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-31T15:12:58.811728+00:00",
-  "total_filings_checked": 15280,
+  "updated_at": "2026-08-01T14:19:23.813194+00:00",
+  "total_filings_checked": 15380,
   "movements": [
     {
       "executive_name": "Lan Huang",
@@ -35,57 +35,6 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/811156/000110465926070037/tm2616645d1_8k.htm",
       "id": "mov_002",
       "sector": "Energy & Utilities"
-    },
-    {
-      "executive_name": "Jillian Evanko",
-      "role": "Chief Executive Officer",
-      "movement_type": "departure",
-      "effective_date": "2026-06-01",
-      "reason": "Jillian Evanko departed as Chief Executive Officer from Honeywell International Inc..",
-      "successor": null,
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-06-02",
-      "company": "Honeywell International Inc.",
-      "ticker": "HON",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/773840/000077384026000068/hon-20260601.htm",
-      "id": "mov_003",
-      "sector": "Industrial & Defense"
-    },
-    {
-      "executive_name": "Todd Heeter",
-      "role": "Chief Financial Officer",
-      "movement_type": "interim",
-      "effective_date": "2026-05-28",
-      "reason": "Todd Heeter appointed interim Chief Financial Officer pending permanent search.",
-      "successor": null,
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-06-02",
-      "company": "Hub Group, Inc.",
-      "ticker": "HUBG",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/940942/000119312526253759/d78400d8k.htm",
-      "id": "mov_004",
-      "sector": "Industrial & Defense"
-    },
-    {
-      "executive_name": "Kevin Beth",
-      "role": "Chief Financial Officer",
-      "movement_type": "departure",
-      "effective_date": "2026-05-27",
-      "reason": "Kevin Beth departed as Chief Financial Officer from Hub Group, Inc..",
-      "successor": "Todd Heeter",
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-06-02",
-      "company": "Hub Group, Inc.",
-      "ticker": "HUBG",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/940942/000119312526253759/d221636d8k.htm",
-      "id": "mov_005",
-      "sector": "Industrial & Defense"
     }
   ]
 }
