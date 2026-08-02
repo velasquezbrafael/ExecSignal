@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-08-01T14:19:23.813194+00:00",
-  "total_filings_checked": 15380,
+  "updated_at": "2026-08-02T14:20:55.838950+00:00",
+  "total_filings_checked": 15480,
   "movements": [
     {
       "executive_name": "Lan Huang",
@@ -18,23 +18,6 @@
       "source_url": "https://www.sec.gov/Archives/edgar/data/1677940/000117184326003908/bysi20260604_8k.htm",
       "id": "mov_001",
       "sector": "Healthcare & Life Sciences"
-    },
-    {
-      "executive_name": "Rejji P. Hayes",
-      "role": "chief financial officer",
-      "movement_type": "retirement",
-      "effective_date": "2026-06-03",
-      "reason": "Rejji P. Hayes retiring from chief financial officer.",
-      "successor": null,
-      "prior_company": null,
-      "signal": "medium",
-      "confidence": 0.82,
-      "filed_date": "2026-06-03",
-      "company": "CMS Energy Corp.",
-      "ticker": "CMS",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/811156/000110465926070037/tm2616645d1_8k.htm",
-      "id": "mov_002",
-      "sector": "Energy & Utilities"
     }
   ]
 }
