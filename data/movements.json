@@ -1,23 +1,5 @@
 {
-  "updated_at": "2026-08-02T14:20:55.838950+00:00",
-  "total_filings_checked": 15480,
-  "movements": [
-    {
-      "executive_name": "Lan Huang",
-      "role": "Chief Executive Officer",
-      "movement_type": "departure",
-      "effective_date": "2026-06-04",
-      "reason": "Lan Huang departed as Chief Executive Officer from BeyondSpring Inc..",
-      "successor": null,
-      "prior_company": null,
-      "signal": "high",
-      "confidence": 0.82,
-      "filed_date": "2026-06-04",
-      "company": "BeyondSpring Inc.",
-      "ticker": "BYSI",
-      "source_url": "https://www.sec.gov/Archives/edgar/data/1677940/000117184326003908/bysi20260604_8k.htm",
-      "id": "mov_001",
-      "sector": "Healthcare & Life Sciences"
-    }
-  ]
+  "updated_at": "2026-08-03T15:34:57.280531+00:00",
+  "total_filings_checked": 15580,
+  "movements": []
 }
